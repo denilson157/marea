@@ -1,0 +1,21 @@
+.bg-default {
+    background-color: #707070;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.btn-primary {
+    color: #fff !important;
+    background-color: #D23232 !important;
+    border-color: #D23232 !important;
+}
+
+.pattern-border {
+    border: 1px solid #707070;
+}
+
+.text-grey {
+    color: #868E96;
+}
