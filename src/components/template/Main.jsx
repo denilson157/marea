@@ -1,12 +1,12 @@
 import React from 'react'
 import { Navbar, Container } from 'react-bootstrap'
-import { Routes } from '../../routes'
+import { AppRoutes } from '../../routes'
 import './styles.css'
 
 const Layout = () => {
     const appBar = (
         <Navbar className='bg-default d-flex align-items-center'>
-            <Container>
+            <Container fluid>
                 <Navbar.Brand className="py-0" href="#home">
                     Marea
                 </Navbar.Brand>
@@ -55,7 +55,7 @@ const Layout = () => {
                 <main >
 
                     <Content>
-                        <Routes />
+                        <AppRoutes />
                     </Content>
 
                 </main>

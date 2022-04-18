@@ -19,3 +19,10 @@
 .text-grey {
     color: #868E96;
 }
+
+.SocialLogin-Google {
+    width: 80%;
+    padding: 5px 6px 5px 6px;
+    border: 0;
+    border-radius: 3px;
+}

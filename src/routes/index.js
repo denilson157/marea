@@ -1,13 +1,14 @@
 import {
-    Main,
     Login,
     Home
-} from './components'
+} from '../pages'
+import { Fragment } from 'react'
+import { Main } from '../components'
 
-import React, { Fragment } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
-
-import { isAuthenticated } from "./services/auth";
+import { Redirect, Switch, Route } from "react-router-dom";
+import { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { AuthGoogleContext } from "../contexts/authGoogle";
 
 
 export const PrivateRoute = props => (
@@ -28,7 +29,7 @@ export const PrivateRoute = props => (
     </Fragment>
 )
 
-export const Routes = () =>
+export const AppRoutes = () =>
     <Switch>
         <Route path="/home" component={Home} />
         <Route path="/login" component={Login} />
@@ -37,3 +38,15 @@ export const Routes = () =>
         <Route path="/" render={() => <Redirect to="/home" />} />
 
     </Switch>
+
+
+
+// export const AppRoutes = () => {
+//     return (
+//         <Fragment>
+//             <Routes>
+//                 <Route path="/" element={<Login />} />
+//             </Routes>
+//         </Fragment>
+//     );
+// };
