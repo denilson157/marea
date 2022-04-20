@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navbar, Container } from 'react-bootstrap'
-import { AppRoutes } from '../../routes'
+// import { AppRoutes } from '../../routes'
 import './styles.css'
 
 const Layout = () => {
@@ -55,7 +55,7 @@ const Layout = () => {
                 <main >
 
                     <Content>
-                        <AppRoutes />
+                        {/* <AppRoutes /> */}
                     </Content>
 
                 </main>
