@@ -1,6 +1,6 @@
 
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
-import { app } from "./firebaseConfig";
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebaseConfig";
 
 
 export const signInGoogle = () => {
@@ -9,9 +9,9 @@ export const signInGoogle = () => {
 
         const provider = new GoogleAuthProvider();
 
-        const auth = getAuth(app);
+        const authG = auth()
 
-        signInWithPopup(auth, provider)
+        signInWithPopup(authG, provider)
             .then((result) => {
 
                 const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -45,4 +45,34 @@ export const signInGoogle = () => {
                 reject(objerror)
             });
     })
+}
+
+export const signInEmailPassword = (email, password) => {
+    return new Promise((resolve, reject) => {
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+                
+                const token = userCredential.accessToken;
+
+                const user = userCredential.user;
+
+                const objReturn = {
+                    token,
+                    user
+                }
+
+                resolve(objReturn)
+            })
+            .catch(error => {
+                reject(({
+                    Code: error.code,
+                    Message: error.message
+                }))
+            })
+
+
+    })
+
+
 }

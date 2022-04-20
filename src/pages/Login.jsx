@@ -3,12 +3,12 @@ import { withSnackbar } from '../util/Snackbar'
 
 import { Link } from 'react-router-dom';
 
-import * as LoginService from '../services/login';
+import * as LoginService from '../services/loginService';
 import { AuthGoogleContext } from '../contexts/authGoogle';
 
 
 const Login = ({ snackbarShowMessage }) => {
-    const { signInGoogle, signed } = useContext(AuthGoogleContext);
+    const { signInGoogle } = useContext(AuthGoogleContext);
     const [loading, setLoading] = useState(false);
 
     const onSubmit = (event) => {
@@ -86,6 +86,10 @@ const Login = ({ snackbarShowMessage }) => {
                                         }
                                         Entrar
                                     </button>
+                                </div>
+
+                                <div className='d-flex justify-content-center text-grey mt-3'>
+                                    <span>OU    </span>
                                 </div>
 
 
