@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import * as LoginService from '../services/loginService';
 import { AuthGoogleContext } from '../contexts/authGoogle';
 import '../components/template/styles.css'
-import BaseLayout from './BaseLayout';
+import { BaseLayout } from '../components/template';
 
 const Login = ({ snackbarShowMessage }) => {
     const { signInGoogle } = useContext(AuthGoogleContext);

@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom'
 import theme from './theme';
 import { PrivateRoute } from './routes'
 import AuthGoogleProvider from './contexts/authGoogle'
+import './App.scss';
 
 const App = () =>
   <BrowserRouter>

@@ -8,7 +8,7 @@ import { Form as FormBootstrap, Col, Button, Row } from 'react-bootstrap'
 import * as RegisterService from '../services/registerService'
 import * as LoginService from '../services/loginService'
 import { AuthGoogleContext } from '../contexts/authGoogle';
-import BaseLayout from './BaseLayout';
+import { BaseLayout } from '../components/template';
 
 
 const schema = yup.object()
@@ -66,11 +66,11 @@ const Register = ({ snackbarShowMessage }) => {
 
         <BaseLayout>
 
-            <div className='px-5 pt-5'>
+            <div className='px-4 pt-5'>
                 <label className='px-3 h4'>Informe os dados abaixo</label>
 
             </div>
-            <div className='d-flex align-items-center justify-content-center flex-column px-5 py-4'>
+            <div className='d-flex align-items-center justify-content-center flex-column p-4'>
 
 
                 <Formik

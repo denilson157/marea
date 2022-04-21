@@ -1,0 +1,57 @@
+$grid-breakpoints: (xs: 0,
+    sm: 576px,
+    md: 1154px,
+    lg: 1190px,
+    xl: 1200px,
+    xxl: 1400px);
+
+$container-max-widths: (sm: 540px,
+    md: 720px,
+    lg: 960px,
+    xl: 1140px,
+    xxl: 1320px);
+
+
+.fill {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden
+}
+
+.fill img {
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
+}
+
+.bg-default {
+    background-color: #707070;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.btn-primary {
+    color: #fff !important;
+    background-color: #D23232 !important;
+    border-color: #D23232 !important;
+}
+
+.pattern-border {
+    border: 1px solid #707070;
+}
+
+.text-grey {
+    color: #868E96;
+}
+
+.SocialLogin-Google {
+    width: 80%;
+    padding: 5px 6px 5px 6px;
+    border: 0;
+    border-radius: 3px;
+}
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
