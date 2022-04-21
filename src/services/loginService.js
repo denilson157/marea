@@ -51,9 +51,10 @@ export const signInEmailPassword = (email, password) => {
         createUserWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
 
-                const token = userCredential.accessToken;
 
                 const user = userCredential.user;
+                
+                const token = user.stsTokenManager.accessToken;
 
                 const objReturn = {
                     token,
