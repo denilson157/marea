@@ -1,6 +1,7 @@
 import React from 'react'
 import { Helmet } from 'react-helmet';
 import { Container, makeStyles, Grid } from '@material-ui/core';
+import { MainLayout } from '../components/template';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -14,18 +15,21 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = () => {
 
-    
+
     const classes = useStyles();
 
     return (
-        <Grid item sm={12}>
-            <Container className={classes.container}>
-                <Helmet>
-                    <title>Home</title>
-                </Helmet>
+        <MainLayout>
+            <Grid item sm={12}>
+                <Container className={classes.container}>
+                    <Helmet>
+                        <title>Home</title>
+                    </Helmet>
+                    HOMEEEEEEEEEEEEEEEEEEEEEEE
 
-            </Container>
-        </Grid>
+                </Container>
+            </Grid>
+        </MainLayout>
     );
 }
 

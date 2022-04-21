@@ -7,7 +7,7 @@ import { Formik, Form } from 'formik';
 import { Form as FormBootstrap, Col, Button, Row } from 'react-bootstrap'
 import * as RegisterService from '../services/registerService'
 import * as LoginService from '../services/loginService'
-import { AuthGoogleContext } from '../contexts/authGoogle';
+import { AuthContext } from '../contexts/auth';
 import { BaseLayout } from '../components/template';
 
 
@@ -25,7 +25,7 @@ const schema = yup.object()
     });
 
 const Register = ({ snackbarShowMessage }) => {
-    const { signInGoogle } = useContext(AuthGoogleContext);
+    const { signIn } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
 
     const register = (obj) => {
@@ -46,7 +46,7 @@ const Register = ({ snackbarShowMessage }) => {
                 RegisterService.pushData(objAdd)
                     .then(() => {
                         snackbarShowMessage("Usuário criado com sucesso", "success")
-                        signInGoogle(user, token)
+                        signIn(user, token)
                     })
                     .catch((erro) => {
                         console.log(erro)

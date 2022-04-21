@@ -1,9 +1,11 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { useState, createContext, useEffect } from "react";
 import { Redirect } from "react-router-dom";
+import { auth } from "../services/firebaseConfig";
 
-export const AuthGoogleContext = createContext("");
+export const AuthContext = createContext("");
 
-const AuthGoogleProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -14,10 +16,25 @@ const AuthGoogleProvider = ({ children }) => {
                 setUser(storageUser);
             }
         };
+
+        const checkUserIdentity = () => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+
+                    const uid = user;
+                    console.log(uid)
+                    // ...
+                } else {
+                    // User is signed out
+                    // ...
+                }
+            })
+        }
+        checkUserIdentity()
         loadStorageData();
     });
 
-    const signInGoogle = (user, token) => {
+    const signIn = (user, token) => {
         sessionStorage.setItem("@AuthFirebase:token", token);
         sessionStorage.setItem("@AuthFirebase:user", JSON.stringify(user));
         setUser(user)
@@ -31,17 +48,17 @@ const AuthGoogleProvider = ({ children }) => {
     }
 
     return (
-        <AuthGoogleContext.Provider
+        <AuthContext.Provider
             value={{
                 signed: !!user,
                 user,
-                signInGoogle,
+                signIn,
                 signOut,
             }}
         >
             {children}
-        </AuthGoogleContext.Provider>
+        </AuthContext.Provider>
     );
 };
 
-export default AuthGoogleProvider
+export default AuthProvider

@@ -4,29 +4,35 @@ import { withSnackbar } from '../util/Snackbar'
 import { Link } from 'react-router-dom';
 
 import * as LoginService from '../services/loginService';
-import { AuthGoogleContext } from '../contexts/authGoogle';
+import { AuthContext } from '../contexts/auth';
 import '../components/template/styles.css'
 import { BaseLayout } from '../components/template';
 
 const Login = ({ snackbarShowMessage }) => {
-    const { signInGoogle } = useContext(AuthGoogleContext);
+    const { signIn } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
 
     const onSubmit = (event) => {
         event.preventDefault();
 
-        // const data = new FormData(event.currentTarget);
+        const data = new FormData(event.currentTarget);
 
 
-        // const obj = {
-        //     email: data.get('email'),
-        //     password: data.get('password'),
-        //     device_name: "Desktop"
-        // };
+        const obj = {
+            email: data.get('email'),
+            password: data.get('password'),
+            device_name: "Desktop"
+        };
 
         setLoading(true)
-        snackbarShowMessage("Erro ao fazer login", "error")
 
+        LoginService.loginEmailPassword(obj.email, obj.password)
+            .then(({ user, token }) => signIn(user, token))
+            .catch((erro) => {
+                console.log(erro)
+                snackbarShowMessage("Erro ao fazer login com google", "error")
+            })
+            .finally(() => setLoading(false))
     }
 
     const loginGoogle = async () => {
@@ -34,7 +40,7 @@ const Login = ({ snackbarShowMessage }) => {
         setLoading(true)
 
         LoginService.signInGoogle()
-            .then(({ user, token }) => signInGoogle(user, token))
+            .then(({ user, token }) => signIn(user, token))
             .catch((erro) => {
                 console.log(erro)
                 snackbarShowMessage("Erro ao fazer login com google", "error")
