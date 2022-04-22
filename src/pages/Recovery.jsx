@@ -84,8 +84,7 @@ const Register = ({ snackbarShowMessage }) => {
                             </Form>
                         )}
                     </Formik>
-
-                    <div className="my-3 d-flex justify-content-center">
+                    <div className="d-flex justify-content-center">
                         <label className='px-1 text-grey'>Não é Cadastrado?</label>
                         <Link to="/register" className='text-decoration-none' >
                             Cadastre-se.

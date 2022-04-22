@@ -4,7 +4,6 @@ import { auth } from "./firebaseConfig";
 
 
 export const recoveryPassword = (email) => {
-    debugger
     return new Promise((resolve, reject) => {
 
         sendPasswordResetEmail(auth, email)
