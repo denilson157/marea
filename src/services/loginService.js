@@ -1,5 +1,5 @@
 
-import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
 
@@ -50,10 +50,11 @@ export const signInEmailPassword = (email, password) => {
 
         createUserWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
-                
-                const token = userCredential.accessToken;
+
 
                 const user = userCredential.user;
+                
+                const token = user.stsTokenManager.accessToken;
 
                 const objReturn = {
                     token,
@@ -73,4 +74,30 @@ export const signInEmailPassword = (email, password) => {
     })
 
 
+}
+
+export const loginEmailPassword = (email, password) => {
+    return new Promise((resolve, reject) => {
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
+                const user = userCredential.user;
+                const token = user.stsTokenManager.accessToken;
+
+                const objReturn = {
+                    token,
+                    user
+                }
+
+                resolve(objReturn)
+            })
+            .catch(error => {
+                reject(({
+                    Code: error.code,
+                    Message: error.message
+                }))
+            })
+
+
+    })
 }
