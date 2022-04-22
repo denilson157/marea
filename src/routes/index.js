@@ -2,6 +2,7 @@ import {
     Register,
     Login,
     Home,
+    Recovery
 } from '../pages'
 import { Fragment } from 'react'
 
@@ -15,6 +16,7 @@ export const PrivateRoute = props => (
                 <Route path="/home" component={Home} />
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
+                <Route path="/recovery" component={Recovery} />
                 {/* <Route exact path="/" render={() => <Redirect to="/home" />} /> */}
                 <Route exact path='/' component={Login} />
             </Fragment>

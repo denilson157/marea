@@ -77,8 +77,11 @@ const Login = ({ snackbarShowMessage }) => {
                             placeholder='Senha'
                         />
 
-                        <div className="my-3 d-flex justify-content-end text-grey">
-                            <label>Esqueci minha senha</label>
+                        <div className="my-3 d-flex justify-content-end">
+
+                            <Link to="/recovery" className='text-decoration-none  text-grey' >
+                                Esqueci minha senha
+                            </Link>
                         </div>
 
                         <div className="d-grid gap-2">
