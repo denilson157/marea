@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Home = () => {
-
+    console.log('eaiporra')
 
     const classes = useStyles();
 

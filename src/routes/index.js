@@ -2,7 +2,9 @@ import {
     Register,
     Login,
     Home,
-    Recovery
+    Recovery,
+    Vehicles,
+    NewVehicle
 } from '../pages'
 import { Fragment } from 'react'
 
@@ -17,6 +19,8 @@ export const PrivateRoute = props => (
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
                 <Route path="/recovery" component={Recovery} />
+                <Route path="/vehicles" component={Vehicles} />
+                <Route path="/new_vehicle" component={NewVehicle} />
                 {/* <Route exact path="/" render={() => <Redirect to="/home" />} /> */}
                 <Route exact path='/' component={Login} />
             </Fragment>
