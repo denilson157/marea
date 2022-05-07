@@ -145,6 +145,7 @@ const Register = ({ snackbarShowMessage }) => {
                                         {formik.errors.phone}
                                     </FormBootstrap.Control.Feedback>
                                 </FormBootstrap.Group>
+
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik04">
                                     <FormBootstrap.Label className="mb-0">Data nascimento</FormBootstrap.Label>
                                     <FormBootstrap.Control
@@ -160,6 +161,7 @@ const Register = ({ snackbarShowMessage }) => {
                                         {formik.errors.birthDate}
                                     </FormBootstrap.Control.Feedback>
                                 </FormBootstrap.Group>
+                                
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik05">
                                     <FormBootstrap.Label className="mb-0">CPF / CNPJ</FormBootstrap.Label>
                                     <FormBootstrap.Control
