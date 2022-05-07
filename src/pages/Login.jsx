@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { withSnackbar } from '../util/Snackbar'
-
+import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 
 import * as LoginService from '../services/loginService';
@@ -11,6 +11,7 @@ import { BaseLayout } from '../components/template';
 const Login = ({ snackbarShowMessage }) => {
     const { signIn } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [redirectUser, setRedirectUser] = useState(false);
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -27,7 +28,10 @@ const Login = ({ snackbarShowMessage }) => {
         setLoading(true)
 
         LoginService.loginEmailPassword(obj.email, obj.password)
-            .then(({ user, token }) => signIn(user, token))
+            .then(({ user, token }) => {
+                signIn(user, token)
+                setRedirectUser(true)
+            })
             .catch((erro) => {
                 console.log(erro)
                 snackbarShowMessage("Erro ao fazer login com google", "error")
@@ -40,7 +44,10 @@ const Login = ({ snackbarShowMessage }) => {
         setLoading(true)
 
         LoginService.signInGoogle()
-            .then(({ user, token }) => signIn(user, token))
+            .then(({ user, token }) => {
+                signIn(user, token)
+                setRedirectUser(true)
+            })
             .catch((erro) => {
                 console.log(erro)
                 snackbarShowMessage("Erro ao fazer login com google", "error")
@@ -48,6 +55,9 @@ const Login = ({ snackbarShowMessage }) => {
             .finally(() => setLoading(false))
 
     }
+
+    if (redirectUser)
+        return <Redirect to="/vehicles" />
 
     return (
 
