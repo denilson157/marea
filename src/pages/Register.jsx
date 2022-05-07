@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
-
+import { Redirect } from 'react-router-dom'
 import { Formik, Form } from 'formik';
 import { Form as FormBootstrap, Col, Button, Row } from 'react-bootstrap'
 import * as RegisterService from '../services/registerService'
@@ -27,6 +27,7 @@ const schema = yup.object()
 const Register = ({ snackbarShowMessage }) => {
     const { signIn } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [redirectUser, setRedirectUser] = useState(false);
 
     const register = (obj) => {
 
@@ -43,14 +44,15 @@ const Register = ({ snackbarShowMessage }) => {
         LoginService.signInEmailPassword(obj.email, obj.password)
             .then(({ user, token }) => {
 
-                RegisterService.pushData(objAdd)
+                RegisterService.pushData(objAdd, user.uid)
                     .then(() => {
                         snackbarShowMessage("Usuário criado com sucesso", "success")
                         signIn(user, token)
+                        setRedirectUser(true)
                     })
                     .catch((erro) => {
                         console.log(erro)
-                        snackbarShowMessage("Erro ao fazer login", "error")
+                        snackbarShowMessage("Erro ao registrar usuário", "error")
                     })
                     .finally(() => setLoading(false))
 
@@ -61,6 +63,9 @@ const Register = ({ snackbarShowMessage }) => {
             })
             .finally(() => setLoading(false))
     }
+
+    if (redirectUser)
+        return <Redirect to="/vehicles" />
 
     return (
 
