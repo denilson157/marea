@@ -18,7 +18,6 @@ const Login = ({ snackbarShowMessage }) => {
 
         const data = new FormData(event.currentTarget);
 
-
         const obj = {
             email: data.get('email'),
             password: data.get('password'),

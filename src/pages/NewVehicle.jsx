@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet";
 import { Container, makeStyles, Grid } from "@material-ui/core";
 import { MainLayout } from "../components/template";
