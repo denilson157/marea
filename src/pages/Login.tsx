@@ -4,12 +4,14 @@ import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 
 import * as LoginService from '../services/loginService';
+import * as RegisterService from '../services/registerService'
 import { AuthContext } from '../contexts/auth';
 import '../components/template/styles.css'
 import { BaseLayout } from '../components/template';
+import { IUser } from 'interfaces';
 
 const Login = ({ snackbarShowMessage }) => {
-    const { signIn } = useContext(AuthContext);
+    const { signIn } = useContext<any>(AuthContext);
     const [loading, setLoading] = useState(false);
     const [redirectUser, setRedirectUser] = useState(false);
 
@@ -29,13 +31,16 @@ const Login = ({ snackbarShowMessage }) => {
         LoginService.loginEmailPassword(obj.email, obj.password)
             .then(({ user, token }) => {
                 signIn(user, token)
+
+
+
                 setRedirectUser(true)
             })
             .catch((erro) => {
                 console.log(erro)
-                snackbarShowMessage("Erro ao fazer login com google", "error")
+                snackbarShowMessage("Erro ao fazer login com google", "error");
+                setLoading(false)
             })
-            .finally(() => setLoading(false))
     }
 
     const loginGoogle = async () => {
@@ -43,8 +48,30 @@ const Login = ({ snackbarShowMessage }) => {
         setLoading(true)
 
         LoginService.signInGoogle()
-            .then(({ user, token }) => {
+            .then(({ user, token, }) => {
+                const { displayName, email, uid } = user
                 signIn(user, token)
+
+                const objRegisterUser: IUser = {
+                    name: displayName,
+                    birthDate: '',
+                    cpfCnpj: '',
+                    email: email,
+                    phone: 0,
+                    receiveContact: false,
+                }
+
+                RegisterService.pushData(objRegisterUser, uid)
+                    .then(() => {
+                        snackbarShowMessage("Usuário criado com sucesso", "success")
+                        signIn(user, token)
+                    })
+                    .catch((erro) => {
+                        console.log(erro)
+                        snackbarShowMessage("Erro ao registrar usuário", "error")
+                    })
+                    .finally(() => setLoading(false))
+
                 setRedirectUser(true)
             })
             .catch((erro) => {
@@ -54,6 +81,7 @@ const Login = ({ snackbarShowMessage }) => {
             .finally(() => setLoading(false))
 
     }
+
 
     if (redirectUser)
         return <Redirect to="/vehicles" />
