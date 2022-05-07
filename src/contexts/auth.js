@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
             const storageUser = sessionStorage.getItem("@AuthFirebase:user");
             const storageToken = sessionStorage.getItem("@AuthFirebase:token");
             if (storageToken && storageUser) {
-                setUser(storageUser);
+                setUser(JSON.parse(storageUser));
             }
         };
 
@@ -21,8 +21,6 @@ const AuthProvider = ({ children }) => {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
 
-                    const uid = user;
-                    console.log(uid)
                     // ...
                 } else {
                     // User is signed out
@@ -32,7 +30,7 @@ const AuthProvider = ({ children }) => {
         }
         checkUserIdentity()
         loadStorageData();
-    });
+    }, []);
 
     const signIn = (user, token) => {
         sessionStorage.setItem("@AuthFirebase:token", token);
