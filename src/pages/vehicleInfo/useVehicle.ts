@@ -3,12 +3,31 @@ import { useState } from 'react'
 import * as VehicleInfoService from '../../services/vehicleInfoService'
 import * as UserService from '../../services/userService'
 
-export const useVehicle = () => {
+const initialValues: IVehicle = {
+    id: '',
+    ano: 0,
+    arCondicionado: false,
+    cambio: '',
+    cidade: '',
+    cilindradas: '',
+    clientId: '',
+    data_kms: '',
+    descricao: '',
+    finalPlaca: '',
+    kms: 0,
+    marca: '',
+    modelo: '',
+    preco: '',
+    tipoCombustivel: '',
+    uf: '',
+    fotosUrl: []
+}
 
+export const useVehicle = () => {
 
     const [loading, setLoading] = useState(false);
     const [userInfo, setUserInfo] = useState<IUser>(undefined);
-    const [vehicle, setVehicle] = useState<IVehicle>()
+    const [vehicle, setVehicle] = useState<IVehicle>(initialValues);
     const [redirectUser, setRedirectUser] = useState(false)
 
     const loadVehicle = (vehicleId: string) => {

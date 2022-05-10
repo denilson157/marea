@@ -3,6 +3,7 @@ import { Container, makeStyles } from "@material-ui/core";
 import { MainLayout } from "../../components/template";
 import { useVehicle } from './useVehicle'
 import { useEffect } from "react";
+import { Carousel } from 'react-bootstrap'
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -50,8 +51,6 @@ const VehicleInfo = (props) => {
                 loadVehicle(vehicleId)
             }, 800)
 
-
-
     }, [props.match?.params?.vehicleId])
 
     if (redirectUser)
@@ -74,7 +73,21 @@ const VehicleInfo = (props) => {
                         <div className="row">
                             <div className="col-md-6 col-xs-12">
 
-                                <img src="https://i.pinimg.com/originals/94/f5/3b/94f53bd1f3f7e1975450ae207c54ff1a.jpg" alt="img vehicle" style={{ width: '100%', height: '600px' }} />
+                                <Carousel className="carousel-pictures">
+                                    {
+                                        vehicle.fotosUrl.map((f, i) =>
+                                            <Carousel.Item>
+                                                <img
+                                                    style={{ width: '100%', height: '600px' }}
+                                                    src={f}
+                                                    alt={`slide_${i}`}
+                                                />
+
+                                            </Carousel.Item>
+                                        )
+                                    }
+                                </Carousel>
+
 
                             </div>
                             <div className="col-md-6 col-xs-12" style={{ height: '600px' }}>

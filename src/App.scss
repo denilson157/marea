@@ -61,4 +61,15 @@ $container-max-widths: (
     border-radius: 3px;
 }
 
+.carousel-pictures>a {
+    width: 10% !important;
+    transition: all ease 0.4s;
+}
+
+.carousel-pictures>a:hover {
+    background-color: #00000070;
+    width: 10% !important;
+    transition: all ease 0.4s;
+}
+
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
