@@ -60,6 +60,7 @@ const Login = ({ snackbarShowMessage }) => {
                     email: email,
                     phone: 0,
                     receiveContact: false,
+                    favorites_vehicles: []
                 }
 
                 RegisterService.pushData(objRegisterUser, uid)

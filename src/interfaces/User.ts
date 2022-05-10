@@ -4,5 +4,6 @@ export interface IUser {
     email: string,
     name: string,
     phone: number,
-    receiveContact: boolean
+    receiveContact: boolean,
+    favorites_vehicles: string[]
 }

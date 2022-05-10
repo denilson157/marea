@@ -1,5 +1,5 @@
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "../services/firebaseConfig";
+import { db } from "./firebaseConfig";
 
 const node = "vehicles"
 const nodeCollectionRef = collection(db, node);
