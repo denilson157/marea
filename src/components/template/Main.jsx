@@ -1,10 +1,12 @@
-import React from "react";
+import { useContext } from "react";
 import { Navbar, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 // import { AppRoutes } from '../../routes'
+import { AuthContext } from '../../contexts/auth';
 import "./styles.css";
 
 const Layout = (props) => {
+  const { signOut } = useContext(AuthContext);
   const appBar = (
     <Navbar className="bg-default d-flex align-items-center">
       <Container fluid>
@@ -37,7 +39,7 @@ const Layout = (props) => {
           >
             <span className="material-icons">person</span>
           </button>
-          <button className="btn text-light cursor-pointer px-1" title="Sair">
+          <button className="btn text-light cursor-pointer px-1" title="Sair" onClick={signOut}>
             <span className="material-icons">logout</span>
           </button>
         </Navbar.Collapse>
