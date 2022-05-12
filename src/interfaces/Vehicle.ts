@@ -13,5 +13,6 @@ export interface IVehicle {
     modelo: string,
     preco: string,
     tipoCombustivel: string,
-    uf: string
+    uf: string,
+    fotosUrl: string[]
 }

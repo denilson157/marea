@@ -10,6 +10,7 @@ import * as VehicleService from "../services/vehicleService";
 import { Link } from "react-router-dom";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../services/firebaseConfig";
+import { AuthContext } from "contexts/auth";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -21,22 +22,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = yup.object().shape({
-  // ano: yup.date().required("Referência de quilometragem requerida"),
-  // arCondicionado: yup.bool().required("Informar se o veículo possui ou não ar condicionado"),
-  // cambio: yup.string().required("Tipo de câmbio requerido"),
-  // cidade: yup.string().required("Cidade requerida"),
-  // cilindradas: yup.string().required("Cilindradas requeridas"),
-  // descricao: yup.string().required("Preencha a descrição do veículo"),
-  // finalPlaca: yup.string().required("Final da placa requerido"),
-  // kms: yup.string().required("Quilometragem atual requerida"),
-  // marca: yup.string().required("Marca requerida"),
-  // modelo: yup.string().required("Modelo requerido"),
-  // preco: yup.string().required("Preço requerido"),
-  // tipoCombustivel: yup.string().required("Tipo de combustível requerido"),
-  // uf: yup.string().required("Estado requerido"),
+  //ano: yup.date().required("Referência de quilometragem requerida"),
+  //arCondicionado: yup
+  //  .bool()
+  //  .required("Informar se o veículo possui ou não ar condicionado"),
+  //cambio: yup.string().required("Tipo de câmbio requerido"),
+  //cidade: yup.string().required("Cidade requerida"),
+  //cilindradas: yup.string().required("Cilindradas requeridas"),
+  //descricao: yup.string().required("Preencha a descrição do veículo"),
+  //finalPlaca: yup.string().required("Final da placa requerido"),
+  //kms: yup.string().required("Quilometragem atual requerida"),
+  //dataKms: yup.string().required("Data da quilometragem atual requerida"),
+  //marca: yup.string().required("Marca requerida"),
+  //modelo: yup.string().required("Modelo requerido"),
+  //preco: yup.string().required("Preço requerido"),
+  //tipoCombustivel: yup.string().required("Tipo de combustível requerido"),
+  //tipoVeiculo: yup.string().required("Tipo de veículo requerido"),
+  //uf: yup.string().required("Estado requerido"),
 });
-
 const NewVehicle = ({ snackbarShowMessage }) => {
+  const { user } = useContext(AuthContext);
+
   useEffect(() => {
     function returnUfs() {
       var ufs = "";
@@ -60,11 +66,11 @@ const NewVehicle = ({ snackbarShowMessage }) => {
   ]);
 
   const uploadFiles = (file) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (!file) return;
-      const storageRef = ref(storage, `files/${file.name}`);
+      const storageRef = ref(storage, `files/${user.uid + "_" + file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
-  
+
       uploadTask.on(
         "state_changed",
         (snapshot) => {
@@ -75,20 +81,19 @@ const NewVehicle = ({ snackbarShowMessage }) => {
         (error) => console.log(error),
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          resolve(downloadURL)
+            resolve(downloadURL);
           });
         }
       );
-    })
-  }; 
-  
-  const save_vehicle = (obj) => {
+    });
+  };
 
+  const save_vehicle = (obj) => {
     let promise = [];
-    imagem.forEach((i)=>{
+    imagem.forEach((i) => {
       promise.push(uploadFiles(i));
-    })
-    Promise.all(promise).then(e=> { 
+    });
+    Promise.all(promise).then((e) => {
       const objAdd = {
         ano: obj.ano,
         arCondicionado: obj.arCondicionado,
@@ -104,17 +109,18 @@ const NewVehicle = ({ snackbarShowMessage }) => {
         modelo: obj.modelo,
         tipoCombustivel: obj.tipoCombustivel,
         uf: obj.uf,
-        fotosUrl: e
+        fotosUrl: e,
       };
 
-    VehicleService.pushData(objAdd)
-      .then(() => {
-        snackbarShowMessage("Veículo cadastrado com sucesso", "success");
-      })
-      .catch((erro) => {
-        console.log(erro);
-        snackbarShowMessage("Erro ao cadastrar veículo", "error");
-      });})
+      VehicleService.pushData(objAdd)
+        .then(() => {
+          snackbarShowMessage("Veículo cadastrado com sucesso", "success");
+        })
+        .catch((erro) => {
+          console.log(erro);
+          snackbarShowMessage("Erro ao cadastrar veículo", "error");
+        });
+    });
   };
 
   function returnCidades(e) {
@@ -129,25 +135,25 @@ const NewVehicle = ({ snackbarShowMessage }) => {
     return cidades;
   }
 
-const image = useRef();
+  const image = useRef();
 
-  async function handleNewPost(){
+  async function handleNewPost() {
     let image_t = await uploadImage(image.current.files);
-};
+  }
 
-async function uploadImage(imagem){
-  console.log(imagem);
-}
+  async function uploadImage(imagem) {
+    console.log(imagem);
+  }
 
-function handleFile(e) {
-  let imagens = [];
-  imagem.forEach((i)=>{
-    imagens.push(i);
-  })
-  imagens.push(e.target.files[0]);
-  setImagem(imagens);
-  console.log(imagens)
-}
+  function handleFile(e) {
+    let imagens = [];
+    imagem.forEach((i) => {
+      imagens.push(i);
+    });
+    imagens.push(e.target.files[0]);
+    setImagem(imagens);
+    console.log(imagens);
+  }
 
   window.onload = function () {
     //Check File API support
@@ -193,7 +199,7 @@ function handleFile(e) {
               validationSchema={schema}
               onSubmit={(values, { setSubmitting }) => {
                 save_vehicle(values);
-                console.log(values)
+                console.log(values);
                 setTimeout(() => {
                   setSubmitting(false);
                 }, 400);
@@ -218,263 +224,343 @@ function handleFile(e) {
                   id="post-form"
                   className="post-form"
                   method="post"
-                  onSubmit={ values => {formik.handleSubmit(values)} }
+                  onSubmit={(values) => {
+                    formik.handleSubmit(values);
+                  }}
                 >
                   <h2>Cadastro de veículo</h2>
                   <div className="row">
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Marca:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Select
+                        name="manual"
+                        label="Manual"
+                        
+                      >
+                        <option></option>
+                        <option>ujndfioqawe</option>
+                      </FormBootstrap.Select>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.marca}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Modelo:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Select
+                        name="manual"
+                        label="Manual"
+                        
+                      >
+                        <option></option>
+                        <option>ujndfioqawe</option>
+                      </FormBootstrap.Select>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.modelo}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                  <FormBootstrap.Group className="mb-2" as={Col} md="2" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Marca:</FormBootstrap.Label>
-                                    <FormBootstrap.Select
-                                        name="manual"
-                                        label="Manual"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    >
-                                      <option>
-                                        ujndfioqawe
-                                      </option>
-                                    </FormBootstrap.Select>
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="1"
+                      controlId="validationFormik02"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Final da placa:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Control
+                        type="text"
+                        name="kms"
+                        placeholder="Ex.: 0"
+                        {...formik.getFieldProps("finalPlaca")}
+                        // value={values.email}
+                        isInvalid={!!formik.errors.finalPlaca}
+                      />
 
-                    <FormBootstrap.Group className="mb-2" as={Col} md="2" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Modelo:</FormBootstrap.Label>
-                                    <FormBootstrap.Select
-                                        name="manual"
-                                        label="Manual"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    >
-                                    </FormBootstrap.Select>
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.finalPlaca}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                    <FormBootstrap.Group className="mb-2" as={Col} md="1" controlId="validationFormik02">
-                                    <FormBootstrap.Label className="mb-0">Final da placa:</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="text"
-                                        name="kms"
-                                        placeholder="Ex.: 0"
-                                        {...formik.getFieldProps('finalPlaca')}
-                                        // value={values.email}
-                                        // onChange={handleChange}
-                                        isInvalid={!!formik.errors.finalPlaca}
-                                    />
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="1"
+                      controlId="validationFormik02"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Ano do veículo:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Control
+                        type="text"
+                        name="kms"
+                        placeholder="Ex.: 2015"
+                        {...formik.getFieldProps("ano")}
+                        // value={values.email}
+                        isInvalid={!!formik.errors.ano}
+                      />
 
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.finalPlaca}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.ano}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik02"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Quilometragem atual do veículo:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Control
+                        type="text"
+                        name="kms"
+                        placeholder="Ex.: 200.000km"
+                        {...formik.getFieldProps("kms")}
+                        // value={values.email}
+                        isInvalid={!!formik.errors.kms}
+                      />
 
-                    <FormBootstrap.Group className="mb-2" as={Col} md="1" controlId="validationFormik02">
-                                    <FormBootstrap.Label className="mb-0">Ano do veículo:</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="text"
-                                        name="kms"
-                                        placeholder="Ex.: 2015"
-                                        {...formik.getFieldProps('ano')}
-                                        // value={values.email}
-                                        // onChange={handleChange}
-                                        isInvalid={!!formik.errors.ano}
-                                    />
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.kms}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.ano}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
-
-
-                    <FormBootstrap.Group className="mb-2" as={Col} md="2" controlId="validationFormik02">
-                                    <FormBootstrap.Label className="mb-0">Quilometragem atual do veículo:</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="text"
-                                        name="kms"
-                                        placeholder="Ex.: 200.000km"
-                                        {...formik.getFieldProps('kms')}
-                                        // value={values.email}
-                                        // onChange={handleChange}
-                                        isInvalid={!!formik.errors.kms}
-                                    />
-
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.kms}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
-
-
-                    <FormBootstrap.Group className="mb-2" as={Col} md="2" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Data da quilometragem:</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="date"
-                                        name="dataKms"
-                                        {...formik.getFieldProps('dataKms')}
-                                        isInvalid={!!formik.errors.dataKms}
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
-
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Data da quilometragem:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Control
+                        type="date"
+                        name="dataKms"
+                        {...formik.getFieldProps("dataKms")}
+                        isInvalid={!!formik.errors.dataKms}
+                      />
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.dataKms}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
                   </div>
-                  
+
                   <div className="row" style={{ marginTop: "2vh" }}>
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="1"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Tipo de veículo:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Check
+                        name="receiveContact"
+                        label="Carro"
+                        value="Carro"
+                      />
+                      <FormBootstrap.Check
+                        name="receiveContact"
+                        label="Moto"
+                        value="Moto"
+                      />
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.tipoVeiculo}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                  <FormBootstrap.Group className="mb-2" as={Col} md="1" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Tipo de veículo:</FormBootstrap.Label>
-                                    <FormBootstrap.Check
-                                        name="receiveContact"
-                                        label="Carro"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Check
-                                        name="receiveContact"
-                                        label="Moto"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="1"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Combustível:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Check
+                        name="receiveContact"
+                        label="Gasolina"
+                        value="Gasolina"
+                      />
+                      <FormBootstrap.Check
+                        name="receiveContact"
+                        label="Flex"
+                        value="Flex"
+                      />
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.tipoCombustivel}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Cilindradas:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Select
+                        name="manual"
+                        label="Manual"
+                      >
+                        <option></option>
+                        <option>UBIAWEUIOFN</option>
+                      </FormBootstrap.Select>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.cilindradas}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                            <FormBootstrap.Group className="mb-2" as={Col} md="1" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Combustível:</FormBootstrap.Label>
-                                    <FormBootstrap.Check
-                                        name="receiveContact"
-                                        label="Gasolina"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Check
-                                        name="receiveContact"
-                                        label="Flex"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Estado:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Select
+                        name="manual"
+                        id="select_estado"
+                        {...formik.getFieldProps("select_estado")}
+                        onChange={returnCidades}
+                      >
+                        <option checked>Selecione...</option>
+                        {estados.map((estado) => (
+                          <option value={estado.id}>{estado.nome}</option>
+                        ))}
+                      </FormBootstrap.Select>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.uf}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                    
-                  <FormBootstrap.Group className="mb-2" as={Col} md="2" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Cilindradas:</FormBootstrap.Label>
-                                    <FormBootstrap.Select
-                                        name="manual"
-                                        label="Manual"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    >
-                                      
-                                    </FormBootstrap.Select>
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Cidade:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Select
+                        name="manual"
+                        id="select_cidade"
+                        
+                      >
+                        {cidades.map((cidade) => (
+                          <option value={cidade.id}>{cidade.nome}</option>
+                        ))}
+                      </FormBootstrap.Select>
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.cidade}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-                    <div className="col-2">
-                      <div class="form-group">
-                        <label for="select_estado">Estado:</label>
-                        <select
-                          class="form-control"
-                          id="select_estado"
-                          onChange={returnCidades}
-                        >
-                          <option checked>Selecione...</option>
-                          {estados.map((estado) => (
-                            <option value={estado.id}>{estado.nome}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="col-2">
-                      <div class="form-group">
-                        <label for="select_cidade">Cidade:</label>
-                        <select class="form-control" id="select_cidade">
-                          {cidades.map((cidade) => (
-                            <option value={cidade.id}>{cidade.nome}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="2"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Possui ar-condicionado?:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Check
+                        name="ac_sim"
+                        label="Sim"
+                      />
+                      <FormBootstrap.Check
+                        name="ac_nao"
+                        label="Não"
+                      />
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.arCondicionado}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
 
-
-                    <FormBootstrap.Group className="mb-2" as={Col} md="2" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Possui ar-condicionado?:</FormBootstrap.Label>
-                                    <FormBootstrap.Check
-                                        name="ac_sim"
-                                        label="Sim"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Check
-                                        name="ac_nao"
-                                        label="Não"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
-
-
-                    <FormBootstrap.Group className="mb-2" as={Col} md="1" controlId="validationFormik04">
-                                    <FormBootstrap.Label className="mb-0">Câmbio:</FormBootstrap.Label>
-                                    <FormBootstrap.Check
-                                        name="manual"
-                                        label="Manual"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Check
-                                        name="automatico"
-                                        label="Automático"
-                                        onChange={formik.handleChange}
-                                        id="validationFormik08"
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.dataKms}
-                                    </FormBootstrap.Control.Feedback>
-                            </FormBootstrap.Group>
-
-
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="1"
+                      controlId="validationFormik04"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Câmbio:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Check
+                        name="manual"
+                        label="Manual"
+                      />
+                      <FormBootstrap.Check
+                        name="automatico"
+                        label="Automático"
+                      />
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.cambio}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
                   </div>
                   <div className="row" style={{ marginTop: "2vh" }}>
-                  <FormBootstrap.Group className="mb-2" as={Col} md="1" controlId="validationFormik02">
-                                    <FormBootstrap.Label className="mb-0">Descrição:</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="text"
-                                        name="descricao"
-                                        placeholder="Ex.: 0"
-                                        {...formik.getFieldProps('descricao')}
-                                        // value={values.email}
-                                        // onChange={handleChange}
-                                        isInvalid={!!formik.errors.descricao}
-                                    />
+                    <FormBootstrap.Group
+                      className="mb-2"
+                      as={Col}
+                      md="1"
+                      controlId="validationFormik02"
+                    >
+                      <FormBootstrap.Label className="mb-0">
+                        Descrição:
+                      </FormBootstrap.Label>
+                      <FormBootstrap.Control
+                        type="text"
+                        name="descricao"
+                        placeholder="Ex.: 0"
+                        {...formik.getFieldProps("descricao")}
+                        // value={values.email}
+                        isInvalid={!!formik.errors.descricao}
+                      />
 
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.descricao}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
-
+                      <FormBootstrap.Control.Feedback type="invalid">
+                        {formik.errors.descricao}
+                      </FormBootstrap.Control.Feedback>
+                    </FormBootstrap.Group>
                   </div>
-
 
                   <div className="row" style={{ marginTop: "2vh" }}>
                     <div className="col-11">
                       <div className="row">
                         <h4 for="fotos">Adicionar fotos: </h4>
-                        <input id="fotos" type="file" onChange={handleFile} multiple/>
+                        <input
+                          id="fotos"
+                          type="file"
+                          onChange={handleFile}
+                          multiple
+                        />
                       </div>
                       <div className="row">
                         <output id="result" />
@@ -483,11 +569,11 @@ function handleFile(e) {
                   </div>
                   <div className="row">
                     <div className="col-4">
-                    <div className="d-grid gap-2 pt-1">
-                                <Button className="btn btn-primary" type="submit">
-                                    Cadastrar
-                                </Button>
-                            </div>
+                      <div className="d-grid gap-2 pt-1">
+                        <Button className="btn btn-primary" type="submit">
+                          Cadastrar
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </Form>
