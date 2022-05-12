@@ -10,9 +10,14 @@ export const getData = (id: string): Promise<IVehicle> => {
         getDoc(doc(db, node, id))
             .then(snap => {
                 const exist = snap.exists();
-
-                if (exist)
-                    resolve(snap.data() as IVehicle)
+                if (exist) {
+                    const obj: IVehicle = {
+                        id: snap.id,
+                        ...snap.data() as IVehicle
+                    }
+                    
+                    resolve(obj)
+                }
                 else
                     reject("Not found")
             })

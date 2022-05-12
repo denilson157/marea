@@ -32,6 +32,8 @@ const AuthProvider = ({ children }) => {
         loadStorageData();
     }, []);
 
+
+
     const signIn = (user, token) => {
         sessionStorage.setItem("@AuthFirebase:token", token);
         sessionStorage.setItem("@AuthFirebase:user", JSON.stringify(user));
@@ -40,9 +42,11 @@ const AuthProvider = ({ children }) => {
     }
 
     const signOut = () => {
+        debugger
         sessionStorage.clear();
         setUser(null);
-        return <Redirect to="/" />;
+        auth.signOut()
+        return <Redirect to="/home" />;
     }
 
     return (
@@ -51,7 +55,7 @@ const AuthProvider = ({ children }) => {
                 signed: !!user,
                 user,
                 signIn,
-                signOut,
+                signOut
             }}
         >
             {children}

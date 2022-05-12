@@ -1,4 +1,5 @@
 export interface IVehicle {
+    id: string,
     ano: number,
     arCondicionado: boolean,
     cambio: string,

@@ -1,16 +1,19 @@
-$grid-breakpoints: (xs: 0,
+$grid-breakpoints: (
+    xs: 0,
     sm: 576px,
     md: 1154px,
     lg: 1190px,
     xl: 1200px,
-    xxl: 1400px);
+    xxl: 1400px
+);
 
-$container-max-widths: (sm: 540px,
+$container-max-widths: (
+    sm: 540px,
     md: 720px,
     lg: 960px,
     xl: 1140px,
-    xxl: 1320px);
-
+    xxl: 1320px
+);
 
 .fill {
     display: flex;
@@ -33,6 +36,10 @@ $container-max-widths: (sm: 540px,
     cursor: pointer;
 }
 
+.color-primary {
+    color: #D23232 !important;
+}
+
 .btn-primary {
     color: #fff !important;
     background-color: #D23232 !important;
@@ -52,6 +59,17 @@ $container-max-widths: (sm: 540px,
     padding: 5px 6px 5px 6px;
     border: 0;
     border-radius: 3px;
+}
+
+.carousel-pictures>a {
+    width: 10% !important;
+    transition: all ease 0.4s;
+}
+
+.carousel-pictures>a:hover {
+    background-color: #00000070;
+    width: 10% !important;
+    transition: all ease 0.4s;
 }
 
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
