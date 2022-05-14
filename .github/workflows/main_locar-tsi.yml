@@ -1,8 +1,8 @@
 name: Build and deploy Node.js app - locar-tsi
 
 env:
-  FIREBASE_KEY: ${{ secrets.API_KEY_FIREBASE }}  
-  FIREBASE_ID: ${{ secrets.API_ID_FIREBASE }}
+  REACT_APP_FIREBASE_KEY: ${{ secrets.API_KEY_FIREBASE }}  
+  REACT_APP_FIREBASE_ID: ${{ secrets.API_ID_FIREBASE }}
 
 on:
   push:

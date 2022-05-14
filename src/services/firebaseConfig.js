@@ -9,13 +9,13 @@ console.log(process.env)
 console.log(window._env_)
 
 const firebaseConfig = {
-    apiKey: env.FIREBASE_KEY,
+    apiKey: env.REACT_APP_FIREBASE_KEY,
     authDomain: "marea-pi05.firebaseapp.com",
     databaseURL: "marea-pi05-default-rtdb.firebaseio.com",
     projectId: "marea-pi05",
     storageBucket: "marea-pi05.appspot.com",
     messagingSenderId: "442681379300",
-    appId: env.FIREBASE_ID
+    appId: env.REACT_APP_FIREBASE_ID
 };
 
 export const app = initializeApp(firebaseConfig);
