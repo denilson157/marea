@@ -3,8 +3,10 @@ name: Build and deploy Node.js app - locar-tsi
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
