@@ -107,7 +107,7 @@ const Home = () => {
                             {
                                 vechicles.map((vechicle) => 
                                     <div className='container bg-white shadow p-3 m-3' style={{'max-width' : '330px'}}>
-                                        <img src='https://via.placeholder.com/300x200' className='d-block pb-1'/>
+                                        <img src='https://via.placeholder.com/300x200' className='d-block pb-1' alt="place"/>
                                         <div className='d-flex justify-content-between pb-1'>
                                             <span>{vechicle.marca + ' ' + vechicle.modelo}</span>
                                             <span className="material-icons">favorite_border</span>
