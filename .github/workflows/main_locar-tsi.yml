@@ -1,9 +1,5 @@
 name: Build and deploy Node.js app - locar-tsi
 
-env:
-  REACT_APP_FIREBASE_KEY: "Teste"
-  REACT_APP_FIREBASE_ID: "Teste"
-
 on:
   push:
     branches: [ main ]
