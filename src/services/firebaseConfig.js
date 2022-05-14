@@ -3,14 +3,16 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
+const env = typeof window === 'undefined' ? process.env : window._env_;
+
 const firebaseConfig = {
-    apiKey: process.env.FIREBASE_KEY,
+    apiKey: env.FIREBASE_KEY,
     authDomain: "marea-pi05.firebaseapp.com",
     databaseURL: "marea-pi05-default-rtdb.firebaseio.com",
     projectId: "marea-pi05",
     storageBucket: "marea-pi05.appspot.com",
     messagingSenderId: "442681379300",
-    appId: process.env.FIREBASE_ID
+    appId: env.FIREBASE_ID
 };
 
 export const app = initializeApp(firebaseConfig);
