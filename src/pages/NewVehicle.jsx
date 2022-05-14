@@ -1,13 +1,10 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { Helmet } from "react-helmet";
+import React, { useContext, useEffect } from "react";
 import { Container, makeStyles, Grid } from "@material-ui/core";
 import { MainLayout } from "../components/template";
-import { Form as FormBootstrap, Col, Button, Row } from "react-bootstrap";
+import { Form as FormBootstrap, Col, Button } from "react-bootstrap";
 import * as yup from "yup";
-import { withSnackbar } from "../util/Snackbar";
 import { Formik, Form } from "formik";
 import * as VehicleService from "../services/vehicleService";
-import { Link } from "react-router-dom";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../services/firebaseConfig";
 import { AuthContext } from "contexts/auth";
@@ -52,7 +49,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
       return ufs;
     }
 
-    const data = returnUfs();
+    returnUfs();
   }, []);
 
   const [imagem, setImagem] = React.useState([]);
@@ -74,9 +71,9 @@ const NewVehicle = ({ snackbarShowMessage }) => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
+          // const prog = Math.round(
+          //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          // );
         },
         (error) => console.log(error),
         () => {
@@ -135,15 +132,15 @@ const NewVehicle = ({ snackbarShowMessage }) => {
     return cidades;
   }
 
-  const image = useRef();
+  // const image = useRef();
 
-  async function handleNewPost() {
-    let image_t = await uploadImage(image.current.files);
-  }
+  // async function handleNewPost() {
+  //   let image_t = await uploadImage(image.current.files);
+  // }
 
-  async function uploadImage(imagem) {
-    console.log(imagem);
-  }
+  // async function uploadImage(imagem) {
+  //   console.log(imagem);
+  // }
 
   function handleFile(e) {
     let imagens = [];
