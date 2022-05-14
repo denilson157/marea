@@ -50,7 +50,7 @@ const VehicleInfo = (props) => {
 
                 loadVehicle(vehicleId)
             }, 800)
-
+    // eslint-disable-next-line
     }, [props.match?.params?.vehicleId])
 
     if (redirectUser)

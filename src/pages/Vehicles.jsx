@@ -1,7 +1,6 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { Container, makeStyles, Grid } from "@material-ui/core";
-import { BaseLayout, MainLayout } from "../components/template";
+import { MainLayout } from "../components/template";
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
