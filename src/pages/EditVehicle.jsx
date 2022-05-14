@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../services/firebaseConfig";
 import { AuthContext } from "contexts/auth";
-import { convertToObject } from "typescript";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,8 +40,27 @@ const schema = yup.object().shape({
   //tipoVeiculo: yup.string().required("Tipo de veículo requerido"),
   //uf: yup.string().required("Estado requerido"),
 });
-const NewVehicle = ({ snackbarShowMessage }) => {
+const NewVehicle = (props) => {
+
   const { user } = useContext(AuthContext);
+
+  const loadVehicle = (vehicleId: string) => {
+    setLoading(true)
+
+    loadUserInfo()
+        .then((a) => {
+            console.log(a)
+            VehicleInfoService.getData(vehicleId)
+                .then(respVehicle => {
+                    setVehicle(respVehicle)
+                })
+                .catch(() => {
+
+                })
+                .finally(() => setLoading(false))
+        })
+}
+
   useEffect(() => {
     function returnUfs() {
       var ufs = "";
@@ -54,6 +72,18 @@ const NewVehicle = ({ snackbarShowMessage }) => {
 
     const data = returnUfs();
   }, []);
+
+  useEffect(() => {
+    const vehicleId = props.match?.params?.vehicleId;
+
+    if (!vehicleId)
+        setRedirectUser(true)
+    else
+        setTimeout(() => {
+            loadVehicle(vehicleId)
+        }, 800)
+
+}, [props.match?.params?.vehicleId])
 
   const [imagem, setImagem] = React.useState([]);
 
@@ -100,7 +130,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
         cambio: obj.cambio,
         cidade: obj.cidade,
         cilindradas: obj.cilindradas,
-        clientId: user.uid,
+        clientId: obj.cilindradas,
         dataKms: obj.dataKms,
         descricao: obj.descricao,
         finalPlaca: obj.finalPlaca,
@@ -115,11 +145,11 @@ const NewVehicle = ({ snackbarShowMessage }) => {
 
       VehicleService.pushData(objAdd)
         .then(() => {
-          snackbarShowMessage("Veículo cadastrado com sucesso", "success");
+          
         })
         .catch((erro) => {
           console.log(erro);
-          snackbarShowMessage("Erro ao cadastrar veículo", "error");
+         
         });
     });
   };

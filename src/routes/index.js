@@ -5,7 +5,8 @@ import {
     Recovery,
     Vehicles,
     NewVehicle,
-    VehicleInfo
+    VehicleInfo,
+    EditVehicle
 } from '../pages'
 import { Redirect } from 'react-router-dom'
 import { Fragment } from 'react'
@@ -24,6 +25,7 @@ export const PrivateRoute = props => (
                 <Route path="/vehicles" component={Vehicles} />
                 <Route path="/new_vehicle" component={NewVehicle} />
                 <Route path="/vehicle_info/:vehicleId?" component={VehicleInfo} />
+                <Route path="/edit_vehicle/:vehicleId?" component={EditVehicle} />
                 <Route exact path='/' component={Login} />
                 <Route exact path="/" render={() => <Redirect to="/home" />} />
             </Fragment>
