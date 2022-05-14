@@ -3,7 +3,10 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-const env = typeof window === 'undefined' ? process.env : window._env_;
+const env = window === 'undefined' ? process.env : window._env_;
+
+console.log(process.env)
+console.log(window._env_)
 
 const firebaseConfig = {
     apiKey: env.FIREBASE_KEY,
