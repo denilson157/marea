@@ -53,6 +53,7 @@ const Login = ({ snackbarShowMessage }) => {
                 signIn(user, token)
 
                 const objRegisterUser: IUser = {
+                    id: uid,
                     name: displayName,
                     birthDate: '',
                     cpfCnpj: '',

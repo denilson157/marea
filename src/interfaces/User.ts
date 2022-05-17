@@ -1,4 +1,5 @@
 export interface IUser {
+    id: string,
     birthDate: string,
     cpfCnpj: string,
     email: string,

@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { IUser } from "interfaces";
 import { db } from "./firebaseConfig";
 import { auth } from "../services/firebaseConfig";
+import { getAuth, signOut, reauthenticateWithCredential, updatePassword, EmailAuthProvider } from "firebase/auth";
 
 const node = "users"
 
@@ -60,3 +61,40 @@ export const getData = (): Promise<IUser> => {
             resolve(undefined)
     })
 }
+
+export const updateUser = (obj: IUser): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        const userRef = doc(db, node, auth?.currentUser?.uid)
+
+        setDoc(userRef, obj)
+        .then(rsp => resolve(obj))
+        .catch(e => reject(e))
+    })
+} 
+
+export const updatePasswordUser = (obj: any): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        console.log(obj);
+        const credential = EmailAuthProvider.credential( 
+            auth.currentUser.email,
+            obj.password
+        );
+
+        reauthenticateWithCredential(user, credential).then(() => {
+            updatePassword(user, obj.newPassword)
+            .then(rsp => resolve(obj))
+            .catch(e => reject(e))
+        }).catch((error) => {
+            reject(error)
+        });
+    })
+} 
+
+/*export const signOutUser = () => {
+    const auth = getAuth();
+    signOut(auth)
+    .then(rsp => { return true; })
+    .catch(e => { return false; })
+}*/

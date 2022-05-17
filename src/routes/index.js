@@ -7,7 +7,11 @@ import {
     NewVehicle,
     VehicleInfo,
     EditVehicle,
+<<<<<<< Updated upstream
     FavoritesVehicle
+=======
+    EditUser
+>>>>>>> Stashed changes
 } from '../pages'
 import { Redirect } from 'react-router-dom'
 import { Fragment } from 'react'
@@ -23,6 +27,7 @@ export const PrivateRoute = props => (
                 <Route path="/login" component={Login} />
                 <Route path="/register" component={Register} />
                 <Route path="/recovery" component={Recovery} />
+                <Route path="/editUser" component={EditUser} />
                 <Route path="/vehicles" component={Vehicles} />
                 <Route path="/new_vehicle" component={NewVehicle} />
                 <Route path="/favorite_vehicles" component={FavoritesVehicle} />
