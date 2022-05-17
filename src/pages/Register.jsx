@@ -37,7 +37,8 @@ const Register = ({ snackbarShowMessage }) => {
             phone: obj.phone,
             birthDate: obj.birthDate,
             cpfCnpj: obj.cpfCnpj,
-            receiveContact: (obj.receiveContact || false)
+            receiveContact: (obj.receiveContact || false),
+            favorites_vehicles: []
         }
 
 
@@ -161,7 +162,7 @@ const Register = ({ snackbarShowMessage }) => {
                                         {formik.errors.birthDate}
                                     </FormBootstrap.Control.Feedback>
                                 </FormBootstrap.Group>
-                                
+
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik05">
                                     <FormBootstrap.Label className="mb-0">CPF / CNPJ</FormBootstrap.Label>
                                     <FormBootstrap.Control
