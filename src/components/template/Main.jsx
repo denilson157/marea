@@ -31,7 +31,13 @@ const Layout = (props) => {
             className="btn text-light cursor-pointer px-1"
             title="Favoritos"
           >
-            <span className="material-icons">favorite</span>
+            <Link
+              to="/favorite_vehicles"
+              className="text-decoration-none"
+              style={{ color: "#F8F9FA" }}
+            >
+              <span className="material-icons">favorite</span>
+            </Link>
           </button>
           <button
             className="btn text-light cursor-pointer px-1"

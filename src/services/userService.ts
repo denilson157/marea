@@ -7,14 +7,18 @@ const node = "users"
 
 export const updateFavoriteVehicle = async (vehicleId: string): Promise<string[]> => {
 
-    const favoritesVehiclesUser = ((await getData())?.favorites_vehicles || []);
-    const newFavoritesVehiclesUser = updateVehiclesUser(vehicleId, favoritesVehiclesUser);
+    const user = (await getData());
+    const favorites = user?.favorites_vehicles != null ? user.favorites_vehicles : [];
+
+    const newFavoritesVehiclesUser = updateVehiclesUser(vehicleId, favorites);
+    console.log(newFavoritesVehiclesUser)
 
     return new Promise((resolve, reject) => {
 
         const userRef = doc(db, node, auth?.currentUser?.uid)
 
         setDoc(userRef, {
+            ...user,
             favorites_vehicles: newFavoritesVehiclesUser
         })
             .then(() => {
@@ -40,7 +44,7 @@ const updateVehiclesUser = (vehicleIdHandle, favoritesVehicle: string[]): string
 
 export const getData = (): Promise<IUser> => {
     const userUid = auth?.currentUser?.uid
-
+    console.log(userUid)
     return new Promise((resolve, reject) => {
 
         if (userUid) {
