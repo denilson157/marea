@@ -30,21 +30,6 @@ const Register = ({ snackbarShowMessage }) => {
     const [redirectUser, setRedirectUser] = useState(false);
 
     const register = (obj) => {
-<<<<<<< Updated upstream
-
-        const objAdd = {
-            name: obj.name,
-            email: obj.email,
-            phone: obj.phone,
-            birthDate: obj.birthDate,
-            cpfCnpj: obj.cpfCnpj,
-            receiveContact: (obj.receiveContact || false),
-            favorites_vehicles: []
-        }
-
-
-=======
->>>>>>> Stashed changes
         LoginService.signInEmailPassword(obj.email, obj.password)
             .then(({ user, token }) => {
 
@@ -55,7 +40,8 @@ const Register = ({ snackbarShowMessage }) => {
                     phone: obj.phone,
                     birthDate: obj.birthDate,
                     cpfCnpj: obj.cpfCnpj,
-                    receiveContact: (obj.receiveContact || false)
+                    receiveContact: (obj.receiveContact || false),
+                    favorites_vehicles: []
                 }
 
                 RegisterService.pushData(objAdd, user.uid)

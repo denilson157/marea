@@ -7,11 +7,8 @@ import {
     NewVehicle,
     VehicleInfo,
     EditVehicle,
-<<<<<<< Updated upstream
-    FavoritesVehicle
-=======
+    FavoritesVehicle,
     EditUser
->>>>>>> Stashed changes
 } from '../pages'
 import { Redirect } from 'react-router-dom'
 import { Fragment } from 'react'
