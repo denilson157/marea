@@ -1,15 +1,15 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom'
-import { Formik, Form } from 'formik';
+import { Formik, Form, useFormikContext } from 'formik';
 import { Form as FormBootstrap, Col, Button, Row } from 'react-bootstrap'
 import * as RegisterService from '../services/registerService'
 import * as LoginService from '../services/loginService'
 import { AuthContext } from '../contexts/auth';
 import { BaseLayout } from '../components/template';
-
+import InputMask from 'react-input-mask'
 
 const schema = yup.object()
     .shape({
@@ -30,6 +30,7 @@ const Register = ({ snackbarShowMessage }) => {
     const [redirectUser, setRedirectUser] = useState(false);
 
     const register = (obj) => {
+        setLoading(true)
         LoginService.signInEmailPassword(obj.email, obj.password)
             .then(({ user, token }) => {
 
@@ -95,7 +96,6 @@ const Register = ({ snackbarShowMessage }) => {
                         password: '',
                         passwordConfirmation: '',
                     }}
-
                 >
                     {formik => (
                         <Form className="p-3" noValidate onSubmit={formik.handleSubmit}>
@@ -132,13 +132,13 @@ const Register = ({ snackbarShowMessage }) => {
                                 </FormBootstrap.Group>
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik03">
                                     <FormBootstrap.Label className="mb-0">Telefone</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="number"
+
+                                    <InputMask
+                                        type="string"
                                         name="phone"
                                         {...formik.getFieldProps('phone')}
-                                        // value={values.phone}
-                                        // onChange={handleChange}
-                                        isInvalid={!!formik.errors.phone}
+                                        mask="(99) 99999-9999"
+                                        className="form-control"
                                     />
 
                                     <FormBootstrap.Control.Feedback type="invalid">
@@ -164,14 +164,21 @@ const Register = ({ snackbarShowMessage }) => {
 
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik05">
                                     <FormBootstrap.Label className="mb-0">CPF / CNPJ</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="number"
+                                    <InputMask
+                                        type="string"
+                                        name="cpfCnpj"
+                                        {...formik.getFieldProps('cpfCnpj')}
+                                        mask="999-999-999-99"
+                                        className="form-control"
+                                    />
+                                    {/* <FormBootstrap.Control
+                                        type="string"
                                         name="cpfCnpj"
                                         {...formik.getFieldProps('cpfCnpj')}
                                         // value={values.cpfCnpj}
                                         // onChange={handleChange}
                                         isInvalid={!!formik.errors.cpfCnpj}
-                                    />
+                                    /> */}
 
                                     <FormBootstrap.Control.Feedback type="invalid">
                                         {formik.errors.cpfCnpj}
