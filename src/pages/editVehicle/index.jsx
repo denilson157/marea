@@ -1,20 +1,20 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { Helmet } from "react-helmet";
 import { Container, makeStyles, Grid } from "@material-ui/core";
-import { MainLayout } from "../components/template";
+import { MainLayout } from "../../components/template";
 import { Form as FormBootstrap, Col, Button, Row } from "react-bootstrap";
 import * as yup from "yup";
-import { withSnackbar } from "../util/Snackbar";
 import { Formik, Form } from "formik";
-import * as VehicleService from "../services/vehicleService";
+import * as EditVehicleService from "../../services/vehicleEditService";
 import { Link } from "react-router-dom";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../services/firebaseConfig";
-import { AuthContext } from "contexts/auth";
+import { storage } from "../../services/firebaseConfig";
+import { AuthContext } from "../../contexts/auth";
+import { useVehicle } from './useVehicle'
+import { updateData } from "services/vehicleEditService";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    paddingTop: theme.spacing(10),
+    paddingTop: theme.spacing(10), 
     margin: "0px",
     width: "100%",
     maxWidth: "100%",
@@ -40,25 +40,24 @@ const schema = yup.object().shape({
   //tipoVeiculo: yup.string().required("Tipo de veículo requerido"),
   //uf: yup.string().required("Estado requerido"),
 });
-const NewVehicle = (props) => {
+const EditVehicle = (props) => {
 
   const { user } = useContext(AuthContext);
+  const {
+    loading,
+    vehicle,
+    redirectUser,
 
-  const loadVehicle = (vehicleId: string) => {
-    setLoading(true)
+    loadVehicle,
+    userInfo,
+    handleFavoriteVehicle,
 
-    loadUserInfo()
-        .then((a) => {
-            console.log(a)
-            VehicleInfoService.getData(vehicleId)
-                .then(respVehicle => {
-                    setVehicle(respVehicle)
-                })
-                .catch(() => {
+    setRedirectUser
+} = useVehicle()
 
-                })
-                .finally(() => setLoading(false))
-        })
+if(vehicle){
+
+  console.log(vehicle?.fotosUrl)
 }
 
   useEffect(() => {
@@ -118,11 +117,11 @@ const NewVehicle = (props) => {
     });
   };
 
-  const save_vehicle = (obj) => {
+  const edit_vehicle = (obj) => {
     let promise = [];
-    imagem.forEach((i) => {
-      promise.push(uploadFiles(i));
-    });
+    //imagem.forEach((i) => {
+    //  promise.push(uploadFiles(i));
+    //});
     Promise.all(promise).then((e) => {
       const objAdd = {
         ano: obj.ano,
@@ -140,10 +139,10 @@ const NewVehicle = (props) => {
         tipoCombustivel: obj.tipoCombustivel,
         tipoVeiculo: obj.tipoVeiculo,
         uf: obj.uf,
-        fotosUrl: e,
+        //fotosUrl: e,
+        id: vehicle?.id
       };
-
-      VehicleService.pushData(objAdd)
+      EditVehicleService.updateData(objAdd)
         .then(() => {
           
         })
@@ -221,31 +220,41 @@ const NewVehicle = (props) => {
 
   return (
     <MainLayout>
+      {
+                    !vehicle && !loading &&
+                    <div>
+                        <label>Nenhum veículo encontrado</label>
+                    </div>
+                }
+                {
+                    vehicle && !loading &&
       <Grid item sm={12}>
         <Container className={classes.container}>
           <div name="form_vehicle">
             <Formik
               validationSchema={schema}
               onSubmit={(values, { setSubmitting }) => {
-                save_vehicle(values);
-                console.log(values);
+                edit_vehicle(values);
                 setTimeout(() => {
                   setSubmitting(false);
                 }, 400);
               }}
               initialValues={{
-                ano: "",
-                arCondicionado: "",
-                cambio: "",
-                cidade: "",
-                cilindradas: "",
-                descricao: "",
-                finalPlaca: "",
-                kms: "",
-                marca: "",
-                modelo: "",
-                tipoCombustivel: "",
-                uf: "",
+                ano: vehicle?.ano,
+                arCondicionado: vehicle?.arCondicionado,
+                cambio: vehicle?.cambio,
+                cidade: vehicle?.cidade,
+                cilindradas: vehicle?.cilindradas,
+                descricao: vehicle?.descricao,
+                finalPlaca: vehicle?.finalPlaca,
+                kms: vehicle?.kms,
+                marca: vehicle?.marca,
+                modelo: vehicle?.modelo,
+                tipoCombustivel: vehicle?.tipoVeiculo,
+                uf: vehicle?.uf,
+                dataKms: vehicle?.dataKms,
+                tipoVeiculo: vehicle?.tipoVeiculo,
+                tipoCombustivel: vehicle?.tipoCombustivel
               }}
             >
               {(formik) => (
@@ -370,9 +379,9 @@ const NewVehicle = (props) => {
                         name="kms"
                         placeholder="Ex.: 200.000km"
                         {...formik.getFieldProps("kms")}
-                        // value={values.email}
                         isInvalid={!!formik.errors.kms}
                       />
+
 
                       <FormBootstrap.Control.Feedback type="invalid">
                         {formik.errors.kms}
@@ -587,6 +596,9 @@ const NewVehicle = (props) => {
                     <div className="col-11">
                       <div className="row">
                         <h4 for="fotos">Adicionar fotos: </h4>
+                        {vehicle?.fotosUrl.map((foto) => (
+                          <img src={foto} style={{float:'left', width: '250px', margin: '10px'}}/>
+                        ))}
                         <input
                           id="fotos"
                           type="file"
@@ -614,8 +626,8 @@ const NewVehicle = (props) => {
           </div>
         </Container>
       </Grid>
-    </MainLayout>
-  );
+}
+    </MainLayout>  );
 };
 
-export default NewVehicle;
+export default EditVehicle;
