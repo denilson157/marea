@@ -30,19 +30,19 @@ const Register = ({ snackbarShowMessage }) => {
     const [redirectUser, setRedirectUser] = useState(false);
 
     const register = (obj) => {
-
-        const objAdd = {
-            name: obj.name,
-            email: obj.email,
-            phone: obj.phone,
-            birthDate: obj.birthDate,
-            cpfCnpj: obj.cpfCnpj,
-            receiveContact: (obj.receiveContact || false)
-        }
-
-
         LoginService.signInEmailPassword(obj.email, obj.password)
             .then(({ user, token }) => {
+
+                const objAdd = {
+                    id: user.uid,
+                    name: obj.name,
+                    email: obj.email,
+                    phone: obj.phone,
+                    birthDate: obj.birthDate,
+                    cpfCnpj: obj.cpfCnpj,
+                    receiveContact: (obj.receiveContact || false),
+                    favorites_vehicles: []
+                }
 
                 RegisterService.pushData(objAdd, user.uid)
                     .then(() => {
@@ -161,7 +161,7 @@ const Register = ({ snackbarShowMessage }) => {
                                         {formik.errors.birthDate}
                                     </FormBootstrap.Control.Feedback>
                                 </FormBootstrap.Group>
-                                
+
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik05">
                                     <FormBootstrap.Label className="mb-0">CPF / CNPJ</FormBootstrap.Label>
                                     <FormBootstrap.Control
