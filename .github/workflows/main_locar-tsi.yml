@@ -26,7 +26,7 @@ jobs:
            npm ci
       - name: Build the app 🏗
         run: |        
-          npm run build    
+          CI=false npm run build    
       - name: Start the app 📤
         run: |
           npm start &
