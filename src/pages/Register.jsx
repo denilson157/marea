@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom'
-import { Formik, Form, useFormikContext } from 'formik';
+import { Formik, Form } from 'formik';
 import { Form as FormBootstrap, Col, Button, Row } from 'react-bootstrap'
 import * as RegisterService from '../services/registerService'
 import * as LoginService from '../services/loginService'
@@ -230,6 +230,8 @@ const Register = ({ snackbarShowMessage }) => {
                                 </FormBootstrap.Group>
                             </Row>
                             <FormBootstrap.Group className="pb-4">
+
+
                                 <FormBootstrap.Check
                                     required
                                     name="receiveContact"
@@ -241,6 +243,10 @@ const Register = ({ snackbarShowMessage }) => {
                             </FormBootstrap.Group>
                             <div className="d-grid gap-2 pt-1">
                                 <Button className="btn btn-primary" type="submit" disabled={loading}>
+                                    {
+                                        loading &&
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    }
                                     Cadastrar
                                 </Button>
                             </div>
