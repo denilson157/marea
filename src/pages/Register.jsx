@@ -9,7 +9,11 @@ import * as RegisterService from '../services/registerService'
 import * as LoginService from '../services/loginService'
 import { AuthContext } from '../contexts/auth';
 import { BaseLayout } from '../components/template';
-import InputMask from 'react-input-mask'
+import InputMask from 'react-input-mask';
+
+
+const cnpjMask = "99.999.999/9999-99";
+const cpfMask = "999.999.999-99";
 
 const schema = yup.object()
     .shape({
@@ -27,6 +31,7 @@ const schema = yup.object()
 const Register = ({ snackbarShowMessage }) => {
     const { signIn } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [mask, setMask] = useState(cpfMask);
     const [redirectUser, setRedirectUser] = useState(false);
 
     const register = (obj) => {
@@ -163,12 +168,21 @@ const Register = ({ snackbarShowMessage }) => {
                                 </FormBootstrap.Group>
 
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik05">
-                                    <FormBootstrap.Label className="mb-0">CPF / CNPJ</FormBootstrap.Label>
+                                    <FormBootstrap.Label className="mb-0">
+                                        <FormBootstrap.Check
+                                            type="switch"
+                                            id="checkCNPJCPF"
+                                            label={mask === cpfMask ? 'CPF' : 'CNPJ'}
+                                            checked={mask === cpfMask}
+                                            onChange={() => setMask(old => old === cpfMask ? cnpjMask : cpfMask)}
+                                            name="A"
+                                        />
+                                    </FormBootstrap.Label>
                                     <InputMask
                                         type="string"
                                         name="cpfCnpj"
                                         {...formik.getFieldProps('cpfCnpj')}
-                                        mask="999-999-999-99"
+                                        mask={mask}
                                         className="form-control"
                                     />
                                     {/* <FormBootstrap.Control
@@ -220,7 +234,8 @@ const Register = ({ snackbarShowMessage }) => {
                                     required
                                     name="receiveContact"
                                     label="Deseja receber contato?"
-                                    onChange={formik.handleChange}
+                                    // onChange={formik.handleChange}
+                                    {...formik.getFieldProps('receiveContact')}
                                     id="validationFormik08"
                                 />
                             </FormBootstrap.Group>
