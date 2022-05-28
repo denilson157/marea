@@ -10,6 +10,7 @@ import * as LoginService from '../services/loginService'
 import { AuthContext } from '../contexts/auth';
 import { BaseLayout } from '../components/template';
 import InputMask from 'react-input-mask';
+import { getDataByEmail } from 'services/userService';
 
 
 const cnpjMask = "99.999.999/9999-99";
@@ -40,40 +41,65 @@ const Register = ({ snackbarShowMessage }) => {
             setRedirectUser(true);
     }, [user])
 
-    const register = (obj) => {
-        setLoading(true)
-        LoginService.signInEmailPassword(obj.email, obj.password)
-            .then(({ user, token }) => {
+    const userExist = (email) =>
+        new Promise(resolve => {
+            getDataByEmail(email)
+                .then((user) => {
+                    console.log(user)
+                    resolve(user?.id !== undefined)
+                })
+                .catch((err) => {
+                    resolve(false)
+                    console.log(err)
+                })
+        })
 
-                const objAdd = {
-                    id: user.uid,
-                    name: obj.name,
-                    email: obj.email,
-                    phone: obj.phone,
-                    birthDate: obj.birthDate,
-                    cpfCnpj: obj.cpfCnpj,
-                    receiveContact: (obj.receiveContact || false),
-                    favorites_vehicles: []
+
+    const register = async (obj) => {
+        setLoading(true)
+
+        userExist(obj.email)
+            .then(exist => {
+
+
+                if (exist) {
+                    snackbarShowMessage("e-mail já cadastrado", "error")
+                    return;
                 }
 
-                RegisterService.pushData(objAdd, user.uid)
-                    .then(() => {
-                        snackbarShowMessage("Usuário criado com sucesso", "success")
-                        signIn(user, token)
-                        setRedirectUser(true)
+                LoginService.signInEmailPassword(obj.email, obj.password)
+                    .then(({ user, token }) => {
+
+                        const objAdd = {
+                            id: user.uid,
+                            name: obj.name,
+                            email: obj.email,
+                            phone: obj.phone,
+                            birthDate: obj.birthDate,
+                            cpfCnpj: obj.cpfCnpj,
+                            receiveContact: (obj.receiveContact || false),
+                            favorites_vehicles: []
+                        }
+
+                        RegisterService.pushData(objAdd, user.uid)
+                            .then(() => {
+                                snackbarShowMessage("Usuário criado com sucesso", "success")
+                                signIn(user, token)
+                                setRedirectUser(true)
+                            })
+                            .catch((erro) => {
+                                console.log(erro)
+                                snackbarShowMessage("Erro ao registrar usuário", "error")
+                            })
+                            .finally(() => setLoading(false))
+
                     })
                     .catch((erro) => {
                         console.log(erro)
-                        snackbarShowMessage("Erro ao registrar usuário", "error")
+                        snackbarShowMessage(erro.Message, "error", 5000)
                     })
                     .finally(() => setLoading(false))
-
             })
-            .catch((erro) => {
-                console.log(erro)
-                snackbarShowMessage(erro.Message, "error", 5000)
-            })
-            .finally(() => setLoading(false))
     }
 
     if (redirectUser)
