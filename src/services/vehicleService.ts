@@ -1,4 +1,4 @@
-import { addDoc, collection, FieldPath, documentId, query, where, getDocs } from "firebase/firestore";
+import { addDoc, collection, documentId, query, where, getDocs } from "firebase/firestore";
 import { IVehicle } from "interfaces";
 import { db } from "./firebaseConfig";
 

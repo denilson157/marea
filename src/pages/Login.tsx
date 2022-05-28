@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';
@@ -9,11 +9,17 @@ import { AuthContext } from '../contexts/auth';
 import '../components/template/styles.css'
 import { BaseLayout } from '../components/template';
 import { IUser } from 'interfaces';
+import { getDataByEmail } from 'services/userService';
 
 const Login = ({ snackbarShowMessage }) => {
-    const { signIn } = useContext<any>(AuthContext);
+    const { signIn, user } = useContext<any>(AuthContext);
     const [loading, setLoading] = useState(false);
     const [redirectUser, setRedirectUser] = useState(false);
+
+    useEffect(() => {
+        if (user)
+            setRedirectUser(true);
+    }, [user])
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -37,8 +43,11 @@ const Login = ({ snackbarShowMessage }) => {
                 setRedirectUser(true)
             })
             .catch((erro) => {
-                console.log(erro)
-                snackbarShowMessage("Erro ao fazer login com google", "error");
+
+                if (erro.Code === 'auth/wrong-password')
+                    snackbarShowMessage("Credenciais inválidas", "error");
+                else
+                    snackbarShowMessage("Erro ao fazer login", "error");
                 setLoading(false)
             })
     }
@@ -63,18 +72,31 @@ const Login = ({ snackbarShowMessage }) => {
                     favorites_vehicles: []
                 }
 
-                RegisterService.pushData(objRegisterUser, uid)
-                    .then(() => {
-                        snackbarShowMessage("Usuário criado com sucesso", "success")
-                        signIn(user, token)
-                    })
-                    .catch((erro) => {
-                        console.log(erro)
-                        snackbarShowMessage("Erro ao registrar usuário", "error")
-                    })
-                    .finally(() => setLoading(false))
+                getDataByEmail(email)
+                    .then((user) => {
+                        if (user?.id) {
 
-                setRedirectUser(true)
+                        } else {
+                            if (getDataByEmail(email)) {
+
+                                RegisterService.pushData(objRegisterUser, uid)
+                                    .then(() => {
+                                        snackbarShowMessage("Usuário criado com sucesso", "success")
+                                        signIn(user, token)
+                                        setRedirectUser(true)
+                                    })
+                                    .catch((erro) => {
+                                        console.log(erro)
+                                        snackbarShowMessage("Erro ao registrar usuário", "error")
+                                    })
+                                    .finally(() => setLoading(false))
+                            }
+                        }
+                    })
+
+
+
+
             })
             .catch((erro) => {
                 console.log(erro)

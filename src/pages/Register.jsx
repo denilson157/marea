@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,12 @@ import * as RegisterService from '../services/registerService'
 import * as LoginService from '../services/loginService'
 import { AuthContext } from '../contexts/auth';
 import { BaseLayout } from '../components/template';
+import InputMask from 'react-input-mask';
+import { getDataByEmail } from 'services/userService';
 
+
+const cnpjMask = "99.999.999/9999-99";
+const cpfMask = "999.999.999-99";
 
 const schema = yup.object()
     .shape({
@@ -27,41 +32,74 @@ const schema = yup.object()
 const Register = ({ snackbarShowMessage }) => {
     const { signIn } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [mask, setMask] = useState(cpfMask);
     const [redirectUser, setRedirectUser] = useState(false);
+    const { user } = useContext(AuthContext);
 
-    const register = (obj) => {
-        LoginService.signInEmailPassword(obj.email, obj.password)
-            .then(({ user, token }) => {
+    useEffect(() => {
+        if (user)
+            setRedirectUser(true);
+    }, [user])
 
-                const objAdd = {
-                    id: user.uid,
-                    name: obj.name,
-                    email: obj.email,
-                    phone: obj.phone,
-                    birthDate: obj.birthDate,
-                    cpfCnpj: obj.cpfCnpj,
-                    receiveContact: (obj.receiveContact || false),
-                    favorites_vehicles: []
+    const userExist = (email) =>
+        new Promise(resolve => {
+            getDataByEmail(email)
+                .then((user) => {
+                    console.log(user)
+                    resolve(user?.id !== undefined)
+                })
+                .catch((err) => {
+                    resolve(false)
+                    console.log(err)
+                })
+        })
+
+
+    const register = async (obj) => {
+        setLoading(true)
+
+        userExist(obj.email)
+            .then(exist => {
+
+
+                if (exist) {
+                    snackbarShowMessage("e-mail já cadastrado", "error")
+                    return;
                 }
 
-                RegisterService.pushData(objAdd, user.uid)
-                    .then(() => {
-                        snackbarShowMessage("Usuário criado com sucesso", "success")
-                        signIn(user, token)
-                        setRedirectUser(true)
+                LoginService.signInEmailPassword(obj.email, obj.password)
+                    .then(({ user, token }) => {
+
+                        const objAdd = {
+                            id: user.uid,
+                            name: obj.name,
+                            email: obj.email,
+                            phone: obj.phone,
+                            birthDate: obj.birthDate,
+                            cpfCnpj: obj.cpfCnpj,
+                            receiveContact: (obj.receiveContact || false),
+                            favorites_vehicles: []
+                        }
+
+                        RegisterService.pushData(objAdd, user.uid)
+                            .then(() => {
+                                snackbarShowMessage("Usuário criado com sucesso", "success")
+                                signIn(user, token)
+                                setRedirectUser(true)
+                            })
+                            .catch((erro) => {
+                                console.log(erro)
+                                snackbarShowMessage("Erro ao registrar usuário", "error")
+                            })
+                            .finally(() => setLoading(false))
+
                     })
                     .catch((erro) => {
                         console.log(erro)
-                        snackbarShowMessage("Erro ao registrar usuário", "error")
+                        snackbarShowMessage(erro.Message, "error", 5000)
                     })
                     .finally(() => setLoading(false))
-
             })
-            .catch((erro) => {
-                console.log(erro)
-                snackbarShowMessage(erro.Message, "error", 5000)
-            })
-            .finally(() => setLoading(false))
     }
 
     if (redirectUser)
@@ -95,7 +133,6 @@ const Register = ({ snackbarShowMessage }) => {
                         password: '',
                         passwordConfirmation: '',
                     }}
-
                 >
                     {formik => (
                         <Form className="p-3" noValidate onSubmit={formik.handleSubmit}>
@@ -132,13 +169,13 @@ const Register = ({ snackbarShowMessage }) => {
                                 </FormBootstrap.Group>
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik03">
                                     <FormBootstrap.Label className="mb-0">Telefone</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="number"
+
+                                    <InputMask
+                                        type="string"
                                         name="phone"
                                         {...formik.getFieldProps('phone')}
-                                        // value={values.phone}
-                                        // onChange={handleChange}
-                                        isInvalid={!!formik.errors.phone}
+                                        mask="(99) 99999-9999"
+                                        className="form-control"
                                     />
 
                                     <FormBootstrap.Control.Feedback type="invalid">
@@ -163,15 +200,31 @@ const Register = ({ snackbarShowMessage }) => {
                                 </FormBootstrap.Group>
 
                                 <FormBootstrap.Group className="mb-2" as={Col} md="12" controlId="validationFormik05">
-                                    <FormBootstrap.Label className="mb-0">CPF / CNPJ</FormBootstrap.Label>
-                                    <FormBootstrap.Control
-                                        type="number"
+                                    <FormBootstrap.Label className="mb-0">
+                                        <FormBootstrap.Check
+                                            type="switch"
+                                            id="checkCNPJCPF"
+                                            label={mask === cpfMask ? 'CPF' : 'CNPJ'}
+                                            checked={mask === cpfMask}
+                                            onChange={() => setMask(old => old === cpfMask ? cnpjMask : cpfMask)}
+                                            name="A"
+                                        />
+                                    </FormBootstrap.Label>
+                                    <InputMask
+                                        type="string"
+                                        name="cpfCnpj"
+                                        {...formik.getFieldProps('cpfCnpj')}
+                                        mask={mask}
+                                        className="form-control"
+                                    />
+                                    {/* <FormBootstrap.Control
+                                        type="string"
                                         name="cpfCnpj"
                                         {...formik.getFieldProps('cpfCnpj')}
                                         // value={values.cpfCnpj}
                                         // onChange={handleChange}
                                         isInvalid={!!formik.errors.cpfCnpj}
-                                    />
+                                    /> */}
 
                                     <FormBootstrap.Control.Feedback type="invalid">
                                         {formik.errors.cpfCnpj}
@@ -209,16 +262,23 @@ const Register = ({ snackbarShowMessage }) => {
                                 </FormBootstrap.Group>
                             </Row>
                             <FormBootstrap.Group className="pb-4">
+
+
                                 <FormBootstrap.Check
                                     required
                                     name="receiveContact"
                                     label="Deseja receber contato?"
-                                    onChange={formik.handleChange}
+                                    // onChange={formik.handleChange}
+                                    {...formik.getFieldProps('receiveContact')}
                                     id="validationFormik08"
                                 />
                             </FormBootstrap.Group>
                             <div className="d-grid gap-2 pt-1">
                                 <Button className="btn btn-primary" type="submit" disabled={loading}>
+                                    {
+                                        loading &&
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    }
                                     Cadastrar
                                 </Button>
                             </div>
