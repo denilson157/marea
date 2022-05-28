@@ -42,11 +42,15 @@ const AuthProvider = ({ children }) => {
     }
 
     const signOut = () => {
-        debugger
-        sessionStorage.clear();
-        setUser(null);
         auth.signOut()
-        return <Redirect to="/home" />;
+        .then(rsp => { 
+            sessionStorage.clear();
+            setUser(null);
+            return <Redirect to="/login" /> 
+        })
+        .catch(e => { 
+            return false;
+        });
     }
 
     return (

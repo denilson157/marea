@@ -6,7 +6,8 @@ import { AuthContext } from '../../contexts/auth';
 import "./styles.css";
 
 const Layout = (props) => {
-  const { signOut } = useContext(AuthContext);
+  const { signOut, user } = useContext(AuthContext);
+
   const appBar = (
     <Navbar className="bg-default d-flex align-items-center">
       <Container fluid>
@@ -15,33 +16,58 @@ const Layout = (props) => {
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
-          <button
-            className="btn text-light cursor-pointer px-1"
-            title="Meus Veículos"
-          >
-            <Link
-              to="/vehicles"
-              className="text-decoration-none"
-              style={{ color: "#F8F9FA" }}
-            >
-              <span className="material-icons">directions_car</span>
-            </Link>
-          </button>
-          <button
-            className="btn text-light cursor-pointer px-1"
-            title="Favoritos"
-          >
-            <span className="material-icons">favorite</span>
-          </button>
-          <button
-            className="btn text-light cursor-pointer px-1"
-            title="Editar Perfil"
-          >
-            <span className="material-icons">person</span>
-          </button>
-          <button className="btn text-light cursor-pointer px-1" title="Sair" onClick={signOut}>
-            <span className="material-icons">logout</span>
-          </button>
+          {
+            !user &&
+            <>
+              <Link to="/login" className=' text-white text-decoration-none' >
+                Fazer login
+              </Link>
+            </>
+          }
+          {
+            user && <>
+              <button
+                className="btn text-light cursor-pointer px-1"
+                title="Meus Veículos"
+              >
+                <Link
+                  to="/vehicles"
+                  className="text-decoration-none"
+                  style={{ color: "#F8F9FA" }}
+                >
+                  <span className="material-icons">directions_car</span>
+                </Link>
+              </button>
+              <button
+                className="btn text-light cursor-pointer px-1"
+                title="Favoritos"
+              >
+                <Link
+                  to="/favorite_vehicles"
+                  className="text-decoration-none"
+                  style={{ color: "#F8F9FA" }}
+                >
+                  <span className="material-icons">favorite</span>
+                </Link>
+              </button>
+              <button
+                className="btn text-light cursor-pointer px-1"
+                title="Editar Perfil"
+              >
+                <Link
+                  to={user ? "/editUser" : "/login"}
+                  className="text-decoration-none"
+                  style={{ color: "#F8F9FA" }}
+                >
+                  <span className="material-icons">person</span>
+                </Link>
+              </button>
+
+              <button className="btn text-light cursor-pointer px-1" title="Sair" onClick={signOut}>
+                <span className="material-icons">logout</span>
+              </button>
+            </>
+          }
         </Navbar.Collapse>
       </Container>
     </Navbar>

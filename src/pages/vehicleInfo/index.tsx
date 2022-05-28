@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         maxWidth: "100%",
     },
-    title: {
+    titleVehicle: {
         fontSize: '20px'
     },
     p: {
@@ -50,7 +50,7 @@ const VehicleInfo = (props) => {
 
                 loadVehicle(vehicleId)
             }, 800)
-    // eslint-disable-next-line
+        // eslint-disable-next-line
     }, [props.match?.params?.vehicleId])
 
     if (redirectUser)
@@ -95,7 +95,7 @@ const VehicleInfo = (props) => {
 
                                     <div className='d-flex align-items-center justify-content-between'>
                                         <div className="d-flex">
-                                            <p className={`${classes.title} ${classes.p}`}>{`${vehicle?.marca} ${vehicle?.modelo}`}</p>
+                                            <p className={`${classes.titleVehicle} ${classes.p}`}>{`${vehicle?.marca} ${vehicle?.modelo}`}</p>
                                             {
                                                 userInfo &&
                                                 <div className="px-2 cursor-pointer" onClick={() => handleFavoriteVehicle(vehicle?.id)}>
@@ -103,7 +103,8 @@ const VehicleInfo = (props) => {
                                                         userInfo.favorites_vehicles.includes(vehicle.id) ?
                                                             <span className="material-icons color-primary">favorite</span>
                                                             :
-                                                            <span className="material-icons color-primary">favorite_border</span>}
+                                                            <span className="material-icons color-primary">favorite_border</span>
+                                                    }
                                                 </div>
                                             }
                                         </div>

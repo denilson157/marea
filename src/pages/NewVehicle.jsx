@@ -41,6 +41,8 @@ const schema = yup.object().shape({
 const NewVehicle = ({ snackbarShowMessage }) => {
   const { user } = useContext(AuthContext);
   useEffect(() => {
+    console.log('reload');
+
     function returnUfs() {
       var ufs = "";
       fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
@@ -446,7 +448,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                       </FormBootstrap.Label>
                       <FormBootstrap.Select
                         {...formik.getFieldProps("uf")}
-                        onChange={returnCidades}
+                        onChange={(e) => returnCidades}
                       >
                         <option>Selecione...</option>
                         {estados.map((estado) => (

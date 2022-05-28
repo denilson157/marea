@@ -1,4 +1,5 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, documentId, query, where, getDocs } from "firebase/firestore";
+import { IVehicle } from "interfaces";
 import { db } from "./firebaseConfig";
 
 const node = "vehicles"
@@ -11,4 +12,19 @@ export const pushData = (obj) => {
             .then(rsp => resolve(obj))
             .catch(e => reject(e))
     })
-} 
+}
+
+export const getByListId = async (uids: string[]): Promise<IVehicle[]> => {
+    const docData = query(nodeCollectionRef, where(documentId(), "in", uids));
+    const vehiclesData = await getDocs(docData);
+
+    const vehicles: IVehicle[] = []
+
+    vehiclesData.forEach(vd => {
+        const vehicle = vd.data() as IVehicle
+        vehicle.id = vd.id
+        vehicles.push(vehicle)
+    })
+
+    return vehicles
+}
