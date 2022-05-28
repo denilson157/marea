@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import * as yup from 'yup';
 import { Link } from 'react-router-dom';
@@ -33,6 +33,12 @@ const Register = ({ snackbarShowMessage }) => {
     const [loading, setLoading] = useState(false);
     const [mask, setMask] = useState(cpfMask);
     const [redirectUser, setRedirectUser] = useState(false);
+    const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (user)
+            setRedirectUser(true);
+    }, [user])
 
     const register = (obj) => {
         setLoading(true)

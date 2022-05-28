@@ -76,7 +76,7 @@ export const updatePasswordUser = (obj: any): Promise<any> => {
     return new Promise((resolve, reject) => {
         const auth = getAuth();
         const user = auth.currentUser;
-        console.log(obj);
+        
         const credential = EmailAuthProvider.credential( 
             auth.currentUser.email,
             obj.password

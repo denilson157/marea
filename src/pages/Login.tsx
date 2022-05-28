@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { withSnackbar } from '../util/Snackbar'
 import { Redirect } from 'react-router-dom'
 import { Link } from 'react-router-dom';
@@ -11,9 +11,14 @@ import { BaseLayout } from '../components/template';
 import { IUser } from 'interfaces';
 
 const Login = ({ snackbarShowMessage }) => {
-    const { signIn } = useContext<any>(AuthContext);
+    const { signIn, user } = useContext<any>(AuthContext);
     const [loading, setLoading] = useState(false);
     const [redirectUser, setRedirectUser] = useState(false);
+
+    useEffect(() => {
+        if (user)
+            setRedirectUser(true);
+    }, [user])
 
     const onSubmit = (event) => {
         event.preventDefault();
@@ -37,8 +42,11 @@ const Login = ({ snackbarShowMessage }) => {
                 setRedirectUser(true)
             })
             .catch((erro) => {
-                console.log(erro)
-                snackbarShowMessage("Erro ao fazer login com google", "error");
+                
+                if (erro.Code === 'auth/wrong-password')
+                    snackbarShowMessage("Credenciais inválidas", "error");
+                else
+                    snackbarShowMessage("Erro ao fazer login", "error");
                 setLoading(false)
             })
     }
