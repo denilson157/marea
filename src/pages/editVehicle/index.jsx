@@ -78,24 +78,24 @@ const EditVehicle = (props) => {
   }, [props.match?.params?.vehicleId]);
 
   const [imagem, setImagem] = React.useState([]);
-  
+
   useEffect(() => {
-    if(imagem.length >= 1){
+    if (imagem.length >= 1) {
       let promise = [];
       let fotosCarro = [];
       imagem.forEach((i) => {
         promise.push(uploadFiles(i));
       });
       Promise.all(promise).then((e) => {
-        initialVehicle.fotosUrl.forEach((foto)=>{
+        initialVehicle.fotosUrl.forEach((foto) => {
           fotosCarro.push(foto);
-        })
-        e.forEach((foto)=>{
+        });
+        e.forEach((foto) => {
           fotosCarro.push(foto);
-        })
+        });
         const objAdd = {
           ...initialVehicle,
-          fotosUrl: fotosCarro
+          fotosUrl: fotosCarro,
         };
         EditVehicleService.updateData(objAdd)
           .then(() => {
@@ -139,54 +139,53 @@ const EditVehicle = (props) => {
       );
     });
   };
-  
+
   const deleteFile = (foto) => {
-    debugger
     let nome_foto = foto;
     nome_foto = nome_foto.split("%2F");
-    let foto_nome = nome_foto[1].split('?');
-    //EditVehicleService.deleteImage(foto_nome[0]);
-    const desertRef = ref(storage, 'files/' + foto_nome[0]);
-    deleteObject(desertRef).then(() => {
-      return new Promise((resolve) => {
-          resolve('deu certo');
-      })
-    }).catch((error) => {
-      console.log(error)
-    });
-  }
-
-  const edit_vehicle = (obj) => {
-    let promise = [];
-    imagem.forEach((i) => {
-      promise.push(uploadFiles(i));
-    });
-    Promise.all(promise).then((e) => {
+    let foto_nome = nome_foto[1].split("?");
+    let excluir_foto = initialVehicle.fotosUrl.filter(nome_foto => !nome_foto.includes(foto));
+    EditVehicleService.deleteImage(foto_nome[0]).then(()=>{
       const objAdd = {
-        ano: obj.ano,
-        arCondicionado: obj.arCondicionado,
-        cambio: obj.cambio,
-        cidade: obj.cidade,
-        cilindradas: obj.cilindradas,
-        clientId: obj.cilindradas,
-        dataKms: obj.dataKms,
-        descricao: obj.descricao,
-        finalPlaca: obj.finalPlaca,
-        kms: obj.kms,
-        marca: obj.marca,
-        modelo: obj.modelo,
-        tipoCombustivel: obj.tipoCombustivel,
-        tipoVeiculo: obj.tipoVeiculo,
-        uf: obj.uf,
-        fotosUrl: e,
-        id: vehicle?.id,
+        ...initialVehicle,
+        fotosUrl: excluir_foto,
       };
       EditVehicleService.updateData(objAdd)
-        .then(() => {})
+        .then(() => {
+          listaFotos(excluir_foto);
+          setImagem([]);
+        })
         .catch((erro) => {
           console.log(erro);
         });
     });
+  };
+
+  const edit_vehicle = (obj) => {
+    const objAdd = {
+      ano: obj.ano,
+      arCondicionado: obj.arCondicionado,
+      cambio: obj.cambio,
+      cidade: obj.cidade,
+      cilindradas: obj.cilindradas,
+      clientId: obj.cilindradas,
+      dataKms: obj.dataKms,
+      descricao: obj.descricao,
+      finalPlaca: obj.finalPlaca,
+      kms: obj.kms,
+      marca: obj.marca,
+      modelo: obj.modelo,
+      tipoCombustivel: obj.tipoCombustivel,
+      tipoVeiculo: obj.tipoVeiculo,
+      uf: obj.uf,
+      fotosUrl: vehicle.fotosUrl,
+      id: vehicle?.id,
+    };
+    EditVehicleService.updateData(objAdd)
+      .then(() => {})
+      .catch((erro) => {
+        console.log(erro);
+      });
   };
 
   function returnCidades(e) {
@@ -473,7 +472,9 @@ const EditVehicle = (props) => {
                         >
                           <option>Selecione...</option>
                           {estados.map((estado, i) => (
-                            <option value={estado.id} key={i}>{estado.nome}</option>
+                            <option value={estado.id} key={i}>
+                              {estado.nome}
+                            </option>
                           ))}
                         </FormBootstrap.Select>
                         <FormBootstrap.Control.Feedback type="invalid">
@@ -490,7 +491,9 @@ const EditVehicle = (props) => {
                         >
                           <option>Selecione...</option>
                           {cidades.map((cidade, i) => (
-                            <option value={cidade.id} key={i}>{cidade.nome}</option>
+                            <option value={cidade.id} key={i}>
+                              {cidade.nome}
+                            </option>
                           ))}
                         </FormBootstrap.Select>
                         <FormBootstrap.Control.Feedback type="invalid">
@@ -574,17 +577,22 @@ const EditVehicle = (props) => {
                         <div className="row">
                           <h4 htmlFor="fotos">Adicionar fotos: </h4>
                           {vehicle?.fotosUrl.map((foto, i) => (
-                            <div className="col-12" style={{float: 'left'}}>
-                            <img
-                              src={foto}
-                              key={i}
-                              style={{
-                                float: "left",
-                                width: "250px",
-                                margin: "10px",
-                              }}
-                            />
-                            <button onClick={()=>deleteFile(foto)}>X</button>
+                            <div className="col-12" style={{ float: "left" }}>
+                              <img
+                                src={foto}
+                                key={i}
+                                style={{
+                                  float: "left",
+                                  width: "250px",
+                                  margin: "10px",
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => deleteFile(foto)}
+                              >
+                                X
+                              </button>
                             </div>
                           ))}
                           <input

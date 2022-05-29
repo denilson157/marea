@@ -33,3 +33,14 @@ export const updateData = (obj) => {
                 .catch(e => reject(e))
         })
 }
+
+export const deleteImage = (nomeImagem) => {
+    return new Promise((resolve) => {
+    const desertRef = ref(storage, 'files/' + nomeImagem);
+    deleteObject(desertRef).then(() => {
+          resolve('deu certo');
+      })
+    }).catch((error) => {
+      console.log(error)
+    });
+}
