@@ -11,6 +11,7 @@ import { storage } from "../../services/firebaseConfig";
 import { AuthContext } from "../../contexts/auth";
 import { useVehicle } from "./useVehicle";
 import { updateData } from "services/vehicleEditService";
+import { getStorage, deleteObject } from "firebase/storage";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -77,6 +78,7 @@ const EditVehicle = (props) => {
   }, [props.match?.params?.vehicleId]);
 
   const [imagem, setImagem] = React.useState([]);
+  
   useEffect(() => {
     if(imagem.length >= 1){
       let promise = [];
@@ -96,7 +98,10 @@ const EditVehicle = (props) => {
           fotosUrl: fotosCarro
         };
         EditVehicleService.updateData(objAdd)
-          .then(() => listaFotos(fotosCarro))
+          .then(() => {
+            listaFotos(fotosCarro);
+            setImagem([]);
+          })
           .catch((erro) => {
             console.log(erro);
           });
@@ -134,6 +139,22 @@ const EditVehicle = (props) => {
       );
     });
   };
+  
+  const deleteFile = (foto) => {
+    debugger
+    let nome_foto = foto;
+    nome_foto = nome_foto.split("%2F");
+    let foto_nome = nome_foto[1].split('?');
+    //EditVehicleService.deleteImage(foto_nome[0]);
+    const desertRef = ref(storage, 'files/' + foto_nome[0]);
+    deleteObject(desertRef).then(() => {
+      return new Promise((resolve) => {
+          resolve('deu certo');
+      })
+    }).catch((error) => {
+      console.log(error)
+    });
+  }
 
   const edit_vehicle = (obj) => {
     let promise = [];
@@ -553,6 +574,7 @@ const EditVehicle = (props) => {
                         <div className="row">
                           <h4 htmlFor="fotos">Adicionar fotos: </h4>
                           {vehicle?.fotosUrl.map((foto, i) => (
+                            <div className="col-12" style={{float: 'left'}}>
                             <img
                               src={foto}
                               key={i}
@@ -562,6 +584,8 @@ const EditVehicle = (props) => {
                                 margin: "10px",
                               }}
                             />
+                            <button onClick={()=>deleteFile(foto)}>X</button>
+                            </div>
                           ))}
                           <input
                             id="fotos"

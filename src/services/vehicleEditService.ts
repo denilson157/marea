@@ -1,6 +1,8 @@
 import { getDoc, doc, updateDoc, collection } from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
+import { resolve } from "path";
 import { IVehicle } from "../interfaces";
-import { db } from "../services/firebaseConfig";
+import { db, storage } from "../services/firebaseConfig";
 
 const node = "vehicles"
 const nodeCollectionRef = collection(db, node);
