@@ -2,6 +2,7 @@ import { IUser, IVehicle } from 'interfaces';
 import { useState } from 'react'
 import * as VehicleInfoService from '../../services/vehicleInfoService'
 import * as UserService from '../../services/userService'
+import { setIn } from 'formik';
 
 const initialValues: IVehicle = {
     id: '',
@@ -28,7 +29,19 @@ export const useVehicle = () => {
     const [loading, setLoading] = useState(false);
     const [userInfo, setUserInfo] = useState<IUser>(undefined);
     const [vehicle, setVehicle] = useState<IVehicle>(initialValues);
+    const [initialVehicle, setInitialVehicle] = useState<IVehicle>(initialValues);
     const [redirectUser, setRedirectUser] = useState(false)
+
+    const listaFotos = (fotos: string[]) => {
+        setVehicle({
+            ...vehicle,
+            fotosUrl : fotos
+        });
+        setInitialVehicle({
+            ...initialVehicle,
+            fotosUrl : fotos
+        });
+    }
 
     const loadVehicle = (vehicleId: string) => {
         setLoading(true)
@@ -39,6 +52,7 @@ export const useVehicle = () => {
                 VehicleInfoService.getData(vehicleId)
                     .then(respVehicle => {
                         setVehicle(respVehicle)
+                        setInitialVehicle(respVehicle)
                     })
                     .catch(() => {
 
@@ -77,12 +91,12 @@ export const useVehicle = () => {
     return {
         loading,
         vehicle,
+        initialVehicle,
         redirectUser,
-
+        listaFotos,
         loadVehicle,
         handleFavoriteVehicle,
         userInfo,
-
         setRedirectUser
     }
 
