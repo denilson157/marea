@@ -6,6 +6,7 @@ import { Carousel } from 'react-bootstrap';
 import { useFavoriteVehicle } from './useFavoritesVehicle';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -36,10 +37,9 @@ const FavoritesVehicle = () => {
     const {
         loading,
         vehicles,
-
+        redirectUser,
         loadVehicles,
-        handleFavoriteVehicle,
-        userInfo
+        handleFavoriteVehicle        
     } = useFavoriteVehicle()
 
     const classes = useStyles();
@@ -53,6 +53,9 @@ const FavoritesVehicle = () => {
 
         // eslint-disable-next-line
     }, []);
+    
+    if (redirectUser)
+        return <Redirect to="/home" />
 
     return (
         <MainLayout>

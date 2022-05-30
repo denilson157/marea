@@ -8,6 +8,7 @@ import { Formik, Form } from "formik";
 import * as userService from '../../services/userService';
 import { getAuth } from "firebase/auth";
 import InputMask from 'react-input-mask';
+import { Redirect } from 'react-router-dom'
 
 const schemaChangeUserInfo = yup.object().shape({
     name: yup.string()
@@ -50,7 +51,8 @@ const EditUser = ({ snackbarShowMessage }) => {
         mask,
         setMask,
         cpfMask,
-        cnpjMask
+        cnpjMask,
+        redirectUser
     } = useUser()
 
     useEffect(() => {
@@ -97,6 +99,9 @@ const EditUser = ({ snackbarShowMessage }) => {
         }
     }
 
+    if (redirectUser)
+        return <Redirect to="/home" />
+        
     return (
         <MainLayout>
             <div className="container">

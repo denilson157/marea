@@ -8,21 +8,25 @@ export const useFavoriteVehicle = () => {
     const [loading, setLoading] = useState(false);
     const [userInfo, setUserInfo] = useState<IUser>(undefined);
     const [vehicles, setVehicles] = useState<IVehicle[]>([]);
+    const [redirectUser, setRedirectUser] = useState(false);
+
 
     const loadVehicles = () => {
         setLoading(true)
 
         loadUserInfo()
             .then((a) => {
+                if (a)
+                    VehicleService.getByListId(a.favorites_vehicles)
+                        .then(respVehicle => {
+                            setVehicles(respVehicle)
+                        })
+                        .catch(() => {
 
-                VehicleService.getByListId(a.favorites_vehicles)
-                    .then(respVehicle => {
-                        setVehicles(respVehicle)
-                    })
-                    .catch(() => {
-
-                    })
-                    .finally(() => setLoading(false))
+                        })
+                        .finally(() => setLoading(false))
+                else
+                    setRedirectUser(true);
             })
     }
 
@@ -60,7 +64,8 @@ export const useFavoriteVehicle = () => {
 
         loadVehicles,
         handleFavoriteVehicle,
-        userInfo
+        userInfo,
+        redirectUser
     }
 
 

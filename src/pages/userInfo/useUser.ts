@@ -1,6 +1,7 @@
 import { IUser } from 'interfaces';
 import { useState } from 'react'
 import * as UserService from '../../services/userService'
+import { AuthContext } from '../../contexts/auth';
 
 const initialValues: IUser = {
     id: '',
@@ -21,18 +22,23 @@ export const useUser = () => {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<IUser>(undefined);
     const [mask, setMask] = useState(cpfMask);
+    const [redirectUser, setRedirectUser] = useState(false);
 
     const loadUser = () => {
         setLoading(true)
         UserService.getData()
             .then(respUser => {
-                setUser(respUser)
-                if (respUser.cpfCnpj.length === 18)
-                    setMask(cnpjMask)
+                if (respUser) {
 
+                    setUser(respUser)
+                    if (respUser?.cpfCnpj.length === 18)
+                        setMask(cnpjMask)
+                } else
+                    setRedirectUser(true);
             })
-            .catch(() => {
-
+            .catch((error) => {
+                if (error === 'Not found')
+                    setRedirectUser(true);
             })
             .finally(() => setLoading(false))
     }
@@ -44,6 +50,7 @@ export const useUser = () => {
         mask,
         cpfMask,
         cnpjMask,
-        setMask
+        setMask,
+        redirectUser
     }
 }

@@ -110,7 +110,7 @@ const Register = ({ snackbarShowMessage }) => {
     }
 
     if (redirectUser)
-        return <Redirect to="/vehicles" />
+        return <Redirect to="/home" />
 
     return (
 
