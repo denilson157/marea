@@ -31,7 +31,7 @@ const Layout = (props) => {
                 title="Meus Veículos"
               >
                 <Link
-                  to="/vehicles"
+                  to="/home"
                   className="text-decoration-none"
                   style={{ color: "#F8F9FA" }}
                 >
