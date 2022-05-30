@@ -108,7 +108,7 @@ const Login = ({ snackbarShowMessage }) => {
 
 
     if (redirectUser)
-        return <Redirect to="/vehicles" />
+        return <Redirect to="/home" />
 
     return (
 
@@ -117,7 +117,7 @@ const Login = ({ snackbarShowMessage }) => {
             <div className='d-flex  align-items-center justify-content-center flex-column'>
 
                 <div className='pt-5 pb-4'>
-                    <img src="https://via.placeholder.com/350x243" alt="marea logo" />
+                    <img src="https://imgur.com/kdff5HM.png" alt="marea logo" />
                 </div>
 
                 <div className="pt-2" style={{ width: '350px' }}>

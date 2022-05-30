@@ -22,7 +22,7 @@ const Register = ({ snackbarShowMessage }) => {
             .then(() => snackbarShowMessage("Link para resetar senha enviado", "success"))
             .catch((erro) => {
                 console.log(erro)
-                snackbarShowMessage("Erro ao fazer login", "error")
+                snackbarShowMessage("Erro ao enviar e-mail", "error")
             })
             .finally(() => setLoading(false))
     }
@@ -34,7 +34,7 @@ const Register = ({ snackbarShowMessage }) => {
             <div className='d-flex  align-items-center justify-content-center flex-column'>
 
                 <div className='pt-5 pb-4'>
-                    <img src="https://via.placeholder.com/350x243" alt="marea logo" />
+                    <img src="https://imgur.com/kdff5HM.png" alt="marea logo" />
                 </div>
 
                 <div className='text-grey b-block' style={{ width: '350px' }}>
