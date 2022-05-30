@@ -48,6 +48,7 @@ export const useFavoriteVehicle = () => {
                 }
 
                 setUserInfo(objAtt)
+                loadVehicles()
             })
             .finally(() => setLoading(false))
     }

@@ -21,7 +21,9 @@ const useStyles = makeStyles((theme) => ({
         paddingRigth: theme.spacing(3),
         margin: '0px',
         width: '100%',
-        maxWidth: '100%'
+        maxWidth: '100%',
+        display: 'flex',
+        alignItems:'center'
     },
     vehicleTitle: {
         textDecoration: 'none',
@@ -59,7 +61,11 @@ const FavoritesVehicle = () => {
             </Helmet>
             <Grid item sm={12}>
                 <div className={classes.title}>
-                    <h2 className="h3">Veículos Favoritos</h2>
+                    <h2 className="h3 mx-2">Veículos Favoritos</h2>
+                    {
+                        loading &&
+                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    }
                 </div>
                 <Container className={classes.container}>
                     <div className='row'>
