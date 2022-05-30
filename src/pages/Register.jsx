@@ -11,6 +11,7 @@ import { AuthContext } from '../contexts/auth';
 import { BaseLayout } from '../components/template';
 import InputMask from 'react-input-mask';
 import { getDataByEmail } from 'services/userService';
+import TermsOfUse from './TermsOfUse';
 
 
 const cnpjMask = "99.999.999/9999-99";
@@ -26,7 +27,7 @@ const schema = yup.object()
         password: yup.string().required('Senha requerida'),
         receiveContact: yup.bool(),
         passwordConfirmation: yup.string()
-            .oneOf([yup.ref('password'), null], 'Senhas precisam ser iguais'),
+            .oneOf([yup.ref('password'), null], 'Senhas precisam ser iguais')
     });
 
 const Register = ({ snackbarShowMessage }) => {
@@ -34,6 +35,7 @@ const Register = ({ snackbarShowMessage }) => {
     const [loading, setLoading] = useState(false);
     const [mask, setMask] = useState(cpfMask);
     const [redirectUser, setRedirectUser] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const { user } = useContext(AuthContext);
 
     useEffect(() => {
@@ -56,8 +58,11 @@ const Register = ({ snackbarShowMessage }) => {
 
 
     const register = async (obj) => {
+        if (!termsAccepted) {
+            snackbarShowMessage("Aceite os termos de uso para concluir seu cadastro.", "error")
+            return;
+        }
         setLoading(true)
-
         userExist(obj.email)
             .then(exist => {
 
@@ -272,6 +277,10 @@ const Register = ({ snackbarShowMessage }) => {
                                     {...formik.getFieldProps('receiveContact')}
                                     id="validationFormik08"
                                 />
+
+                            </FormBootstrap.Group>
+                            <FormBootstrap.Group className="pb-4">
+                                <TermsOfUse acceptTerm={setTermsAccepted} termAccepted={termsAccepted} />
                             </FormBootstrap.Group>
                             <div className="d-grid gap-2 pt-1">
                                 <Button className="btn btn-primary" type="submit" disabled={loading}>
