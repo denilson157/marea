@@ -8,21 +8,28 @@ const initialValues: IUser = {
     cpfCnpj: '',
     email: '',
     name: '',
-    phone: 0,
+    phone: '',
     receiveContact: false,
     favorites_vehicles: []
 }
+
+const cnpjMask = "99.999.999/9999-99";
+const cpfMask = "999.999.999-99";
 
 export const useUser = () => {
 
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<IUser>(undefined);
+    const [mask, setMask] = useState(cpfMask);
 
     const loadUser = () => {
         setLoading(true)
         UserService.getData()
             .then(respUser => {
                 setUser(respUser)
+                if (respUser.cpfCnpj.length === 18)
+                    setMask(cnpjMask)
+
             })
             .catch(() => {
 
@@ -33,6 +40,10 @@ export const useUser = () => {
     return {
         loading,
         loadUser,
-        user
+        user,
+        mask,
+        cpfMask,
+        cnpjMask,
+        setMask
     }
 }

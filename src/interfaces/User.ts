@@ -4,7 +4,7 @@ export interface IUser {
     cpfCnpj: string,
     email: string,
     name: string,
-    phone: number,
+    phone: string,
     receiveContact: boolean,
     favorites_vehicles: string[]
 }

@@ -24,10 +24,12 @@ const schema = yup.object()
         phone: yup.string().required('Telefone requerido'),
         birthDate: yup.date().required('Data de nascimento requerido'),
         cpfCnpj: yup.string().required('CPF / CNPJ requerido'),
-        password: yup.string().required('Senha requerida'),
+        password: yup.string().required('Senha requerida').min(8, 'Minimo de 8 caracteres')
+            .max(20, 'Máximo de 20 caracteres'),
         receiveContact: yup.bool(),
         passwordConfirmation: yup.string()
-            .oneOf([yup.ref('password'), null], 'Senhas precisam ser iguais')
+            .oneOf([yup.ref('password'), null], 'Senhas precisam ser iguais').min(8, 'Minimo de 8 caracteres')
+            .max(20, 'Máximo de 20 caracteres')
     });
 
 const Register = ({ snackbarShowMessage }) => {
@@ -181,6 +183,7 @@ const Register = ({ snackbarShowMessage }) => {
                                         {...formik.getFieldProps('phone')}
                                         mask="(99) 99999-9999"
                                         className="form-control"
+                                        isInvalid={!!formik.errors.phone}
                                     />
 
                                     <FormBootstrap.Control.Feedback type="invalid">
@@ -221,6 +224,7 @@ const Register = ({ snackbarShowMessage }) => {
                                         {...formik.getFieldProps('cpfCnpj')}
                                         mask={mask}
                                         className="form-control"
+                                        isInvalid={!!formik.errors.cpfCnpj}
                                     />
                                     {/* <FormBootstrap.Control
                                         type="string"

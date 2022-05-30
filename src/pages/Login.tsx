@@ -67,7 +67,7 @@ const Login = ({ snackbarShowMessage }) => {
                     birthDate: '',
                     cpfCnpj: '',
                     email: email,
-                    phone: 0,
+                    phone: '',
                     receiveContact: false,
                     favorites_vehicles: []
                 }
