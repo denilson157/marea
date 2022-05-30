@@ -11,7 +11,7 @@ const Layout = (props) => {
   const appBar = (
     <Navbar className="bg-default d-flex align-items-center">
       <Container fluid>
-        <Navbar.Brand className="py-0" href="#home">
+        <Navbar.Brand className="py-0" href="/home">
           Marea
         </Navbar.Brand>
         <Navbar.Toggle />

@@ -1,24 +1,13 @@
-import React, { useEffect, useContext, useState } from "react";
-import { Container, makeStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { withSnackbar } from "util/Snackbar";
 import { MainLayout } from "../../components/template";
 import { useUser } from './useUser'
-import { AuthContext } from "../../contexts/auth";
 import { Form as FormBootstrap, Col, Button, Row } from 'react-bootstrap'
 import { Formik, Form } from "formik";
 import * as userService from '../../services/userService';
+import { getAuth } from "firebase/auth";
 
-
-const useStyles = makeStyles((theme) => ({
-    container: {
-        paddingTop: theme.spacing(10),
-        paddingRight: theme.spacing(24),
-        paddingLeft: theme.spacing(24),
-        width: "100%",
-        maxWidth: "100%",
-    }
-}))
 
 const schemaChangeUserInfo = yup.object().shape({
     name: yup.string()
@@ -49,8 +38,9 @@ const schemaChangePassword = yup.object().shape({
      .required('Confirme a nova senha'),
 });
 
+const authUser = getAuth();
+
 const EditUser = ({ snackbarShowMessage }) => {
-    const classes = useStyles();
     const [loadingSubmit, setloadingSubmit] = useState(false);
 
     const {
@@ -105,7 +95,7 @@ const EditUser = ({ snackbarShowMessage }) => {
 
     return (
         <MainLayout>
-            <Container className={classes.container}>
+            <div className="container">
                 {
                     !loadUser && 
                     <div>
@@ -225,70 +215,73 @@ const EditUser = ({ snackbarShowMessage }) => {
                         </Form>
                     )}
                     </Formik>
-                    <Formik
-                    validationSchema={schemaChangePassword}
-                    onSubmit={(values, { setSubmitting, resetForm }) => {
-                        changePassword(values, resetForm);
-                    }}
-                    initialValues={{
-                        password: '',
-                        newPassword: '',
-                        newPasswordConfirmation: '',
-                    }}
-                    >
-                    {formik => (
-                        <Form className="p-3" noValidate onSubmit={formik.handleSubmit}>
-                            <Row>
-                                <h2 className="h4">Alterar Senha</h2>
-                                <FormBootstrap.Group className="mb-2" as={Col} md={4} xs={12} controlId="validationFormik06">
-                                    <FormBootstrap.Label className="mb-0">Senha</FormBootstrap.Label>
-                                    <FormBootstrap.Control type="password" name="password"
-                                        {...formik.getFieldProps('password')}
-                                        isInvalid={!!formik.errors.password}
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.password}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
+                    {
+                        authUser.currentUser && !authUser.currentUser.providerData[0].providerId.includes("google.com") &&
+                        <Formik
+                        validationSchema={schemaChangePassword}
+                        onSubmit={(values, { setSubmitting, resetForm }) => {
+                            changePassword(values, resetForm);
+                        }}
+                        initialValues={{
+                            password: '',
+                            newPassword: '',
+                            newPasswordConfirmation: '',
+                        }}
+                        >
+                        {formik => (
+                            <Form className="p-3" noValidate onSubmit={formik.handleSubmit}>
+                                <Row>
+                                    <h2 className="h4">Alterar Senha</h2>
+                                    <FormBootstrap.Group className="mb-2" as={Col} md={4} xs={12} controlId="validationFormik06">
+                                        <FormBootstrap.Label className="mb-0">Senha</FormBootstrap.Label>
+                                        <FormBootstrap.Control type="password" name="password"
+                                            {...formik.getFieldProps('password')}
+                                            isInvalid={!!formik.errors.password}
+                                        />
+                                        <FormBootstrap.Control.Feedback type="invalid">
+                                            {formik.errors.password}
+                                        </FormBootstrap.Control.Feedback>
+                                    </FormBootstrap.Group>
 
-                                <FormBootstrap.Group className="mb-2" as={Col} md={4} xs={12} controlId="validationFormik06">
-                                    <FormBootstrap.Label className="mb-0">Nova senha</FormBootstrap.Label>
-                                    <FormBootstrap.Control type="password" name="newPassword"
-                                        {...formik.getFieldProps('newPassword')}
-                                        isInvalid={!!formik.errors.newPassword}
-                                    />
+                                    <FormBootstrap.Group className="mb-2" as={Col} md={4} xs={12} controlId="validationFormik06">
+                                        <FormBootstrap.Label className="mb-0">Nova senha</FormBootstrap.Label>
+                                        <FormBootstrap.Control type="password" name="newPassword"
+                                            {...formik.getFieldProps('newPassword')}
+                                            isInvalid={!!formik.errors.newPassword}
+                                        />
 
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.newPassword}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
+                                        <FormBootstrap.Control.Feedback type="invalid">
+                                            {formik.errors.newPassword}
+                                        </FormBootstrap.Control.Feedback>
+                                    </FormBootstrap.Group>
 
-                                <FormBootstrap.Group className="mb-2" as={Col} md={4} xs={12} controlId="validationFormik07">
-                                    <FormBootstrap.Label className="mb-0">Confirmar nova senha</FormBootstrap.Label>
-                                    <FormBootstrap.Control type="password" name="newPasswordConfirmation"
-                                        {...formik.getFieldProps('newPasswordConfirmation')}
-                                        isInvalid={!!formik.errors.newPasswordConfirmation}
-                                    />
-                                    <FormBootstrap.Control.Feedback type="invalid">
-                                        {formik.errors.newPasswordConfirmation}
-                                    </FormBootstrap.Control.Feedback>
-                                </FormBootstrap.Group>
-                            </Row>
-                            <div className="d-grid gap-2 pt-1">
-                                <Button className="btn btn-primary" type="submit" disabled={loadingSubmit}>
-                                {
-                                    loadingSubmit &&
-                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                }
-                                Alterar
-                                </Button>
-                            </div>
-                        </Form>
-                    )}
-                    </Formik>
+                                    <FormBootstrap.Group className="mb-2" as={Col} md={4} xs={12} controlId="validationFormik07">
+                                        <FormBootstrap.Label className="mb-0">Confirmar nova senha</FormBootstrap.Label>
+                                        <FormBootstrap.Control type="password" name="newPasswordConfirmation"
+                                            {...formik.getFieldProps('newPasswordConfirmation')}
+                                            isInvalid={!!formik.errors.newPasswordConfirmation}
+                                        />
+                                        <FormBootstrap.Control.Feedback type="invalid">
+                                            {formik.errors.newPasswordConfirmation}
+                                        </FormBootstrap.Control.Feedback>
+                                    </FormBootstrap.Group>
+                                </Row>
+                                <div className="d-grid gap-2 pt-1">
+                                    <Button className="btn btn-primary" type="submit" disabled={loadingSubmit}>
+                                    {
+                                        loadingSubmit &&
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    }
+                                    Alterar
+                                    </Button>
+                                </div>
+                            </Form>
+                        )}
+                        </Formik>
+                    }
                     </>
                 }
-            </Container>
+            </div>
         </MainLayout>
     )
 }

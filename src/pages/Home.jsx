@@ -5,60 +5,93 @@ import { MainLayout } from '../components/template';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from 'services/firebaseConfig';
 import { Link } from "react-router-dom";
-import { Carousel } from 'react-bootstrap'
+import { Button, Carousel } from 'react-bootstrap'
+import { useUser } from './userInfo/useUser';
+import { updateFavoriteVehicle } from 'services/userService';
 
 const useStyles = makeStyles((theme) => ({
     container: {
         paddingTop: theme.spacing(10),
-        margin: '0px',
-        width: '100%',
-        maxWidth: '100%'
+        margin: "0px",
+        width: "100%",
+        maxWidth: "100%",
     },
 }));
 
 
 const Home = () => {
+    const classes = useStyles();
     const [vehicles, setVehicles] = React.useState([]);
-    const [anoDe, setAnoDe] = React.useState([]);
-    const [anoAte, setAnoAte] = React.useState([]);
-    const [marca, setMarca] = React.useState([]);
-    const [modelo, setModelo] = React.useState([]);
-    const [precoDe, setPrecoDe] = React.useState([]);
-    const [precoAte, setPrecoAte] = React.useState([]);
-    const [busca, setBusca] = React.useState({
-        anoDe: 0,
-        anoAte: 0,
-        marca: "",
-        modelo: "",
-        precoDe: 0,
-        precoAte: 0
-    });
+
+    //Pega dados do usuario
+    const {
+        loading,
+        loadUser,
+        user
+    } = useUser()
+    React.useEffect(() => {
+            setTimeout(() => {
+                loadUser()
+            }, 800)
+    }, []);
+
+    //Filtros
+    const [anoDe, setAnoDe] = React.useState("");
+    const [anoAte, setAnoAte] = React.useState("");
+    const [marca, setMarca] = React.useState("");
+    const [modelo, setModelo] = React.useState("");
+    const [precoDe, setPrecoDe] = React.useState("");
+    const [precoAte, setPrecoAte] = React.useState("");
+    const [filtros, setFiltros] = React.useState([]);
+
+    //Desabilita filtros de ano e preco quando um dos dois é preenchido
+    //Essa ação por enquanto é necessario pois o Firebase possui limitação para filtros de >= e <= para apenas um campo
+    const [disableAno, setDisableAno] = React.useState(false);
+    const [disablePreco, setDisablePreco] = React.useState(false);
+    React.useEffect(() => {
+        setDisablePreco(anoDe.length > 0 || anoAte.length > 0);
+        setDisableAno(precoDe.length > 0 || precoAte.length > 0);
+    }, [anoDe, anoAte, precoDe, precoAte]);
+
 
     function handleBusca(){
-        setBusca({
-            anoDe: anoDe,
-            anoAte: anoAte,
-            marca: marca,
-            modelo: modelo,
-            precoDe: precoDe != "" ? precoDe : 0,
-            precoAte: precoAte != "" ? precoAte : 0
-        });
+        const arrayBusca = [];
+        if(marca.length > 0)
+            arrayBusca.push(where('marca', '==',  marca))
+        if(modelo.length > 0)
+            arrayBusca.push(where('modelo', '==', modelo));
+
+        if(!disableAno && anoDe.length > 0)
+            arrayBusca.push(where('ano', '>=',  parseInt(anoDe)));
+        if(!disableAno && anoAte.length > 0)
+            arrayBusca.push(where('ano', '<=',  parseInt(anoAte)));
+        
+        if(!disablePreco && precoDe.length > 0)
+            arrayBusca.push(where('preco', '>=',  parseInt(precoDe)));
+        if(!disablePreco && precoAte.length > 0)
+            arrayBusca.push(where('preco', '<=',  parseInt(precoAte)));
+        
+        setFiltros(arrayBusca);
     }
 
     React.useEffect(() =>{
-        //const busca = query(collection(db, 'vehicles'), where('marca', '==',  'Scania'), where('modelo', '==', '111S'));
-        //const busca = query(collection(db, 'vehicles'), where('preco', '>=',  500), where('preco', '<=',  1000));
-        const novaBusca = query(
-            collection(db, 'vehicles'), 
-            /*where('ano', busca.anoDe != 0 ? '>=' : 'not-in',  busca.anoDe != 0 ? busca.anoDe : [busca.anoDe]), 
-            where('ano', busca.anoAte != 0 ? '<=' : '!=',  busca.anoAte)*/
+        const busca = query(
+            collection(db, 'vehicles'), ...filtros
         );
 
-        onSnapshot(novaBusca, (querySnapshot => {
+        onSnapshot(busca, (querySnapshot => {
             setVehicles(querySnapshot.docs);
         }));
-    }, [busca]);
-    const classes = useStyles();
+    }, [filtros]);
+
+    function handleFavorite(e){
+        updateFavoriteVehicle(e.target.getAttribute("value"))
+        .then(() => {
+            loadUser();
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
 
     return (
         <MainLayout>
@@ -68,52 +101,54 @@ const Home = () => {
                         <title>Home</title>
                     </Helmet>
                     <div className='row'>
-                        <div className='col-2'>
+                        <div className='col-12 col-md-2'>
                             <div className='container bg-white shadow p-3 mt-3'>
-                                <div className="input-group flex-nowrap">
+                                <div className="input-group flex-nowrap d-none">
                                     <input type="text" className="form-control" placeholder="Pesquisar" aria-describedby="addon-wrapping"/>
                                     <button onClick={handleBusca} className="input-group-text material-icons" id="addon-wrapping">search</button>
                                 </div>
 
-                                <div className='pt-3'>
+                                <div className=''>
                                     <label className='pb-1'>Preço</label>
                                     <div className='d-flex justify-content-between'>
-                                        <input onChange={(e) => setPrecoDe(e.target.value)} className='form-control me-2' type="text" placeholder='De'/>
-                                        <input onChange={(e) => setPrecoAte(e.target.value)} className='form-control ms-2' type="text" placeholder='Até'/>
+                                        <input onChange={(e) => setPrecoDe(e.target.value)} disabled={disablePreco} className='form-control me-2' type="text" placeholder='De'/>
+                                        <input onChange={(e) => setPrecoAte(e.target.value)} disabled={disablePreco} className='form-control ms-2' type="text" placeholder='Até'/>
                                     </div>
                                 </div>
 
                                 <div className='pt-3'>
                                     <label className='pb-1'>Ano</label>
                                     <div className='d-flex justify-content-between'>
-                                        <input onChange={(e) => setAnoDe(e.target.value)} className='form-control me-2' type="text" placeholder='De'/>
-                                        <input onChange={(e) => setAnoAte(e.target.value)} className='form-control ms-2' type="text" placeholder='Até'/>
+                                        <input onChange={(e) => setAnoDe(e.target.value)} disabled={disableAno} className='form-control me-2' type="text" placeholder='De'/>
+                                        <input onChange={(e) => setAnoAte(e.target.value)} disabled={disableAno} className='form-control ms-2' type="text" placeholder='Até'/>
                                     </div>
                                 </div>
 
-                                <select className="form-select mt-4" onChange={(e) => setMarca(e.target.value)}>
-                                    <option selected value="">Marca</option>
+                                <select className="form-select mt-4" defaultValue="" onChange={(e) => setMarca(e.target.value)}>
+                                    <option value="">Marca</option>
                                     <option value="Fiat">Fiat</option>
                                     <option value="Scania">Scania</option>
                                     <option value="Volkswagen">Volkswagen</option>
                                 </select>
 
-                                <select className="form-select mt-4" onChange={(e) => setModelo(e.target.value)}>
-                                    <option selected value="">Modelo</option>
+                                <select className="form-select mt-4" defaultValue="" onChange={(e) => setModelo(e.target.value)}>
+                                    <option value="">Modelo</option>
                                     <option value="Uno">Uno</option>
                                     <option value="111S">111S</option>
                                     <option value="Sandero">Sandero</option>
                                 </select>
+
+                                <Button className="btn btn-primary mt-4 w-100" type="button" onClick={handleBusca}>Pesquisar</Button>
                             </div>
                             <div className='container bg-white shadow p-3 mt-3'>
                                 <span>AD</span>
                             </div>
                         </div>
-                        <div className='col-9'>
-                            <div className='row'>
+                        <div className='col-12 col-md-9'>
+                            <div className='row justify-content-center justify-content-md-start'>
                             {
-                                vehicles.map((vehicle) => 
-                                    <div className='container bg-white shadow p-3 m-3' style={{maxWidth : '330px'}}>
+                                vehicles.map((vehicle, index) => 
+                                    <div key={index} className='container bg-white shadow p-3 m-3' style={{maxWidth : '330px'}}>
                                         <Carousel className="carousel-pictures">
                                             {
                                                 vehicle.data().fotosUrl.map((f, i) =>
@@ -129,15 +164,28 @@ const Home = () => {
                                             }
                                         </Carousel>
                                         <div className='d-flex justify-content-between pb-1'>
-                                            <Link to={"/vehicle_info/" + vehicle.data().id} className="text-decoration-none text-reset">{vehicle.data().marca + ' ' + vehicle.data().modelo}</Link>
-                                            <span className="material-icons">favorite_border</span>
-                                            {/* <span className="material-icons">favorite</span> */}
+                                            <Link to={"/vehicle_info/" + vehicle.data().id} className="d-flex justify-content-between w-100 text-decoration-none text-reset">
+                                                <span>{vehicle.data().marca + ' ' + vehicle.data().modelo}</span>
+                                                <span>{vehicle.data().ano}</span>
+                                            </Link>
+                                                {
+                                                    user &&
+                                                    <button type="button" class="btn color-primary p-0 h-auto" onClick={handleFavorite}>
+                                                        <span className="material-icons" value={vehicle.data().id}>
+                                                            {
+                                                            !loading && user &&user.favorites_vehicles.includes(vehicle.data().id) ?
+                                                                "favorite" :    
+                                                                "favorite_border" 
+                                                            }
+                                                        </span>
+                                                    </button>
+                                                }
                                         </div>
                                         <Link to={"/vehicle_info/" + vehicle.data().id} className="text-decoration-none text-reset">
                                             <div className='d-flex pb-2'>
                                                 <span className='text-muted pe-2'>{vehicle.data().tipoCombustivel}</span>
                                                 <span className='text-muted pe-2'>{vehicle.data().cambio}</span>
-                                                <span className='text-muted pe-2'>{vehicle.data().kms + 'km'}</span>
+                                                <span className='text-muted pe-2 ms-auto'>{vehicle.data().kms + 'km'}</span>
                                             </div>
                                             <div className='d-flex justify-content-between'>
                                                 <span>{'R$ ' + vehicle.data().preco}</span>
@@ -149,7 +197,7 @@ const Home = () => {
                             }
                             </div>
                         </div>
-                        <div className='col-1'>
+                        <div className='col-12 col-md-1'>
                             <div className='container bg-white shadow p-3 mt-3'>
                                 <span>ADs</span>
                             </div>
