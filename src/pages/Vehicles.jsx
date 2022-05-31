@@ -100,12 +100,12 @@ const Vehicles = () => {
                       }
                     </Carousel>
                     <div className='d-flex justify-content-between pb-1'>
-                      <Link to={"/vehicle_info/" + vehicle.data().id} className="d-flex justify-content-between w-100 text-decoration-none text-reset">
+                      <Link to={"/edit_vehicle/" + vehicle.data().id} className="d-flex justify-content-between w-100 text-decoration-none text-reset">
                         <span>{vehicle.data().marca + ' ' + vehicle.data().modelo}</span>
                         <span>{vehicle.data().ano}</span>
                       </Link>
                     </div>
-                    <Link to={"/vehicle_info/" + vehicle.data().id} className="text-decoration-none text-reset">
+                    <Link to={"/edit_vehicle/" + vehicle.data().id} className="text-decoration-none text-reset">
                       <div className='d-flex pb-2'>
                         <span className='text-muted pe-2'>{vehicle.data().tipoCombustivel}</span>
                         <span className='text-muted pe-2'>{vehicle.data().cambio}</span>
