@@ -8,7 +8,9 @@ import { Formik, Form } from "formik";
 import * as userService from '../../services/userService';
 import { getAuth } from "firebase/auth";
 import InputMask from 'react-input-mask';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
 
 const schemaChangeUserInfo = yup.object().shape({
     name: yup.string()
@@ -104,23 +106,24 @@ const EditUser = ({ snackbarShowMessage }) => {
         
     return (
         <MainLayout>
+            <Helmet>
+                <title>Minha Conta</title>
+            </Helmet>
             <div className="container">
                 {
                     !loadUser &&
-                    <div>
-                        Carregando...
+                    <div className="d-flex justify-content-center mt-4">
+                        <div className="spinner-border spinner-border-lg" style={{ width: '50px', height: '50px', color: '#D23232' }} role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
                     </div>
                 }
                 {
                     loading &&
-                    <div>
-                        Carregando...
-                    </div>
-                }
-                {
-                    !user && !loading &&
-                    <div>
-                        <label>Usuario não encontrado</label>
+                    <div className="d-flex justify-content-center mt-4">
+                        <div className="spinner-border spinner-border-lg" style={{ width: '50px', height: '50px', color: '#D23232' }} role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
                     </div>
                 }
                 {

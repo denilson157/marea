@@ -11,8 +11,9 @@ const Layout = (props) => {
   const appBar = (
     <Navbar className="bg-default d-flex align-items-center">
       <Container fluid>
-        <Navbar.Brand className="px-2" href="/home">
+        <Navbar.Brand className="px-2 d-flex" href="/home">
           <img src="https://i.imgur.com/VR3r5n9.png" style={{ maxHeight: '34px' }} alt="loCar" />
+          <span className="ms-2" style={{ alignSelf : "center" }}>LoCar</span>
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
@@ -31,7 +32,7 @@ const Layout = (props) => {
                 title="Meus Veículos"
               >
                 <Link
-                  to="/home"
+                  to="/vehicles"
                   className="text-decoration-none"
                   style={{ color: "#F8F9FA" }}
                 >

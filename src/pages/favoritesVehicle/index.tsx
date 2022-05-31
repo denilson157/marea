@@ -65,10 +65,6 @@ const FavoritesVehicle = () => {
             <Grid item sm={12}>
                 <div className={classes.title}>
                     <h2 className="h3 mx-2">Veículos Favoritos</h2>
-                    {
-                        loading &&
-                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    }
                 </div>
                 <Container className={classes.container}>
                     <div className='row'>
@@ -79,6 +75,14 @@ const FavoritesVehicle = () => {
                         </div>
                         <div className='col-10 col-sm-12 col-md-10'>
                             <div className='row'>
+                                {
+                                    loading &&
+                                    <div className="d-flex justify-content-center mt-4">
+                                        <div className="spinner-border spinner-border-lg" style={{ width: '50px', height: '50px', color: '#D23232' }} role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>                   
+                                }
                                 {
                                     vehicles.map((vehicle) =>
                                         <div key={vehicle.id} className='container bg-white shadow p-3 m-3' style={{ 'maxWidth': '330px' }}>
@@ -110,7 +114,7 @@ const FavoritesVehicle = () => {
                                             <div className='d-flex pb-2'>
                                                 <span className='text-muted pe-2'>{vehicle.tipoCombustivel}</span>
                                                 <span className='text-muted pe-2'>{vehicle.cambio}</span>
-                                                <span className='text-muted pe-2'>{vehicle.kms + 'km'}</span>
+                                                <span className='text-muted ms-auto'>{vehicle.kms + 'km'}</span>
                                             </div>
                                             <div className='d-flex justify-content-between'>
                                                 <span>{'R$ ' + (vehicle.preco || 0)}</span>

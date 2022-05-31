@@ -9,7 +9,7 @@ const BaseLayout = (props) => {
                     <img src="https://i.pinimg.com/originals/94/f5/3b/94f53bd1f3f7e1975450ae207c54ff1a.jpg" alt="marea logo" className='img-fluid pattern-border' />
                 </div>
 
-                <div className="col-md-4 col-sm-12 col-xs-12" style={{ overflowY: 'auto' }}>
+                <div className="col-md-4 col-sm-12 col-12" style={{ overflowY: 'auto' }}>
                     {props.children}
                 </div>
 

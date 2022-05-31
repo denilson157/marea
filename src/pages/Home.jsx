@@ -144,8 +144,8 @@ const Home = () => {
                                 <span>AD</span>
                             </div>
                         </div>
-                        <div className='col-12 col-md-9'>
-                            <div className='row justify-content-center justify-content-md-start'>
+                        <div className='col-12 col-md-8 d-flex justify-content-center'>
+                            <div className='row'>
                             {
                                 vehicles.map((vehicle, index) => 
                                     <div key={index} className='container bg-white shadow p-3 m-3' style={{maxWidth : '330px'}}>
@@ -185,7 +185,7 @@ const Home = () => {
                                             <div className='d-flex pb-2'>
                                                 <span className='text-muted pe-2'>{vehicle.data().tipoCombustivel}</span>
                                                 <span className='text-muted pe-2'>{vehicle.data().cambio}</span>
-                                                <span className='text-muted pe-2 ms-auto'>{vehicle.data().kms + 'km'}</span>
+                                                <span className='text-muted ms-auto'>{vehicle.data().kms + 'km'}</span>
                                             </div>
                                             <div className='d-flex justify-content-between'>
                                                 <span>{'R$ ' + vehicle.data().preco}</span>
@@ -197,7 +197,7 @@ const Home = () => {
                             }
                             </div>
                         </div>
-                        <div className='col-12 col-md-1'>
+                        <div className='col-12 col-md-2'>
                             <div className='container bg-white shadow p-3 mt-3'>
                                 <span>ADs</span>
                             </div>

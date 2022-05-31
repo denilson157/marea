@@ -7,7 +7,6 @@ import { db } from 'services/firebaseConfig';
 import { Helmet } from 'react-helmet';
 import { Button, Carousel } from 'react-bootstrap'
 import { useUser } from './userInfo/useUser';
-import { getAuth } from "firebase/auth";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -20,17 +19,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Vehicles = () => {
   const classes = useStyles();
-
   const [vehicles, setVehicles] = React.useState([]);
-
-  //Pega dados do usuario
-  const authUser = getAuth().currentUser.uid
 
   const {
     loading,
     loadUser,
     user
   } = useUser()
+
   React.useEffect(() => {
     setTimeout(() => {
       loadUser()
@@ -38,41 +34,55 @@ const Vehicles = () => {
   }, []);
 
   React.useEffect(() => {
-    const busca = query( 
-      collection(db, 'vehicles'), where('clientId', '==',  user)
-    );
+    if(!loading && user !== undefined){
+      const busca = query( 
+        collection(db, 'vehicles'), where('clientId', '==',  user.id)
+      );
 
-    onSnapshot(busca, (querySnapshot => {
-      setVehicles(querySnapshot.docs);
-    }));
-  }, []);
+      onSnapshot(busca, (querySnapshot => {
+        setVehicles(querySnapshot.docs);
+      }));
+    }
+  }, [loading, user]);
 
   return (
     <MainLayout>
       <Grid item sm={12}>
         <Container className={classes.container}>
+          <Helmet>
+            <title>Veiculos</title>
+          </Helmet>
           <div className="row">
-            <div className="col-11"></div>
-            <div className="col-1">
+            <div className="col-md-4 col-6">
+              <h2 className="h3 mx-2">Veículos Cadastrados</h2>
+            </div>
+            <div className="col-md-7 col-6 d-flex justify-content-end">
               <Link to="/new_vehicle" className="text-decoration-none">
-                <button
-                  className="btn text-light cursor-pointer px-1"
-                  title="Novo Veículo"
-                >
-                  <span
-                    className="material-icons"
-                    style={{ backgroundColor: "black" }}
-                  >
-                    add_box
-                  </span>
-                </button>
+                <Button className="btn btn-primary" title="Novo Veículo">
+                  Cadastrar Veiculo
+                </Button>
               </Link>
             </div>
+            <div className="col-md-1 d-md-block d-none"></div>
           </div>
-
-          <div className='col-12 col-md-9'>
-            <div className='row justify-content-center justify-content-md-start'>
+          <div className="row">
+            <div className='col-12 col-md-2'>
+              <div className='container bg-white shadow p-3 mt-3'>
+                  <span>AD</span>
+              </div>
+            </div>
+            <div className='col-12 col-md-9'>
+              <div className='row justify-content-center justify-content-md-start'>
               {
+                loading && !user &&
+                <div className="d-flex justify-content-center mt-4">
+                  <div className="spinner-border spinner-border-lg" style={{ width: '50px', height: '50px', color: '#D23232' }} role="status">
+                      <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              }
+              {
+                !loading && user &&
                 vehicles.map((vehicle, index) =>
                   <div key={index} className='container bg-white shadow p-3 m-3' style={{ maxWidth: '330px' }}>
                     <Carousel className="carousel-pictures">
@@ -94,24 +104,12 @@ const Vehicles = () => {
                         <span>{vehicle.data().marca + ' ' + vehicle.data().modelo}</span>
                         <span>{vehicle.data().ano}</span>
                       </Link>
-                      {
-                        authUser &&
-                        <button type="button" class="btn color-primary p-0 h-auto">
-                          <span className="material-icons" value={vehicle.data().id}>
-                            {
-                              !loading && user && user.favorites_vehicles.includes(vehicle.data().id) ?
-                                "favorite" :
-                                "favorite_border"
-                            }
-                          </span>
-                        </button>
-                      }
                     </div>
                     <Link to={"/vehicle_info/" + vehicle.data().id} className="text-decoration-none text-reset">
                       <div className='d-flex pb-2'>
                         <span className='text-muted pe-2'>{vehicle.data().tipoCombustivel}</span>
                         <span className='text-muted pe-2'>{vehicle.data().cambio}</span>
-                        <span className='text-muted pe-2 ms-auto'>{vehicle.data().kms + 'km'}</span>
+                        <span className='text-muted ms-auto'>{vehicle.data().kms + 'km'}</span>
                       </div>
                       <div className='d-flex justify-content-between'>
                         <span>{'R$ ' + vehicle.data().preco}</span>
@@ -121,6 +119,12 @@ const Vehicles = () => {
                   </div>
                 )
               }
+              </div>
+            </div>
+            <div className='col-12 col-md-1'>
+              <div className='container bg-white shadow p-3 mt-3'>
+                  <span>ADs</span>
+              </div>
             </div>
           </div>
         </Container>
