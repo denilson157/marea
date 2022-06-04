@@ -6,7 +6,7 @@ export interface IVehicle {
     cidade: string,
     cilindradas: string,
     clientId: string,
-    data_kms: string,
+    dataKms: string,
     descricao: string,
     finalPlaca: string,
     kms: number,
@@ -14,6 +14,7 @@ export interface IVehicle {
     modelo: string,
     preco: string,
     tipoCombustivel: string,
+    tipoVeiculo: string,
     uf: string,
     fotosUrl: string[]
 }

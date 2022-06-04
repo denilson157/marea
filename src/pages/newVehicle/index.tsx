@@ -79,7 +79,6 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                         }}
                     >
                         {(formik) => {
-                            console.log(formik)
                             return (
                                 <Form
                                     id="post-form"
@@ -180,7 +179,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {...formik.getFieldProps('ano')}
                                                 mask="9999"
                                                 className="form-control"
-                                                isInvalid={!!formik.errors.ano}
+                                                isInvalid={!!formik.errors.ano && formik.touched.ano === true}
                                             />
                                             <FormBootstrap.Control.Feedback type="invalid">
                                                 {formik.errors.ano}

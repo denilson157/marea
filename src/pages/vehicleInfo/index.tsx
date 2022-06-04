@@ -117,7 +117,7 @@ const VehicleInfo = (props) => {
                                         <span className='pe-2'>{vehicle?.tipoCombustivel}</span>
                                         <span className='pe-2'>{vehicle?.cambio}</span>
                                         <span className='pe-2'>{vehicle?.kms + 'km'}</span>
-                                        <span className='pe-2'>{`(${vehicle?.data_kms})`}</span>
+                                        <span className='pe-2'>{`(${vehicle?.dataKms})`}</span>
                                     </div>
 
                                     <div className="pb-3">

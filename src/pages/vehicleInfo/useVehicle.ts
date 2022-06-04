@@ -11,7 +11,7 @@ const initialValues: IVehicle = {
     cidade: '',
     cilindradas: '',
     clientId: '',
-    data_kms: '',
+    dataKms: '',
     descricao: '',
     finalPlaca: '',
     kms: 0,
@@ -19,6 +19,7 @@ const initialValues: IVehicle = {
     modelo: '',
     preco: '',
     tipoCombustivel: '',
+    tipoVeiculo: '',
     uf: '',
     fotosUrl: []
 }

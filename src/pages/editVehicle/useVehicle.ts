@@ -1,8 +1,10 @@
 import { IUser, IVehicle } from 'interfaces';
-import { useState } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import * as VehicleInfoService from '../../services/vehicleInfoService'
 import * as UserService from '../../services/userService'
-import { setIn } from 'formik';
+import { urlIbgeEstados } from 'util/mock';
+import * as EditVehicleService from "../../services/vehicleEditService";
+import { AuthContext } from "contexts/auth"
 
 const initialValues: IVehicle = {
     id: '',
@@ -12,7 +14,7 @@ const initialValues: IVehicle = {
     cidade: '',
     cilindradas: '',
     clientId: '',
-    data_kms: '',
+    dataKms: '',
     descricao: '',
     finalPlaca: '',
     kms: 0,
@@ -20,39 +22,76 @@ const initialValues: IVehicle = {
     modelo: '',
     preco: '',
     tipoCombustivel: '',
+    tipoVeiculo: '',
     uf: '',
     fotosUrl: []
 }
 
 export const useVehicle = () => {
 
+    const { user } = useContext<any>(AuthContext);
     const [loading, setLoading] = useState(false);
+    const [vehicleLoaded, setVehicleLoaded] = useState(false);
     const [userInfo, setUserInfo] = useState<IUser>(undefined);
     const [vehicle, setVehicle] = useState<IVehicle>(initialValues);
     const [initialVehicle, setInitialVehicle] = useState<IVehicle>(initialValues);
-    const [redirectUser, setRedirectUser] = useState(false)
+    const [redirectUser, setRedirectUser] = useState(false);
+
+    const [imagem, setImagem] = useState([]);
+
+    const [estados, setEstados] = useState([{ id: undefined, sigla: "  ", nome: "Carregando" }]);
+
+    const [cidades, setCidades] = useState([{ id: undefined, nome: "Selecione a cidade" }]);
+
+
+    useEffect(() => {
+
+        function returnUfs() {
+            fetch(urlIbgeEstados)
+                .then((response) => response.json())
+                .then((data) => {
+                    setEstados(data)
+
+                });
+        }
+
+        returnUfs();
+
+
+        // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
+        if (vehicle.id !== '' && estados.length > 0)
+            fetch(`${urlIbgeEstados}/` + estados.find(x => x.sigla === vehicle.uf)?.id + "/municipios")
+                .then((response) => response.json())
+                .then((dataCidade) => {
+                    setCidades(dataCidade)
+                });
+    }, [estados, vehicle])
 
     const listaFotos = (fotos: string[]) => {
         setVehicle({
             ...vehicle,
-            fotosUrl : fotos
+            fotosUrl: fotos
         });
         setInitialVehicle({
             ...initialVehicle,
-            fotosUrl : fotos
+            fotosUrl: fotos
         });
     }
 
     const loadVehicle = (vehicleId: string) => {
         setLoading(true)
-
         loadUserInfo()
             .then((a) => {
-                console.log(a)
                 VehicleInfoService.getData(vehicleId)
                     .then(respVehicle => {
+
+                        setVehicleLoaded(true)
                         setVehicle(respVehicle)
                         setInitialVehicle(respVehicle)
+
                     })
                     .catch(() => {
 
@@ -88,6 +127,82 @@ export const useVehicle = () => {
     }
 
 
+    const returnCidades = (e) => {
+        fetch(`${urlIbgeEstados}/` + e.target.value + "/municipios")
+            .then((response) => response.json())
+            .then((data) => setCidades(data));
+    }
+
+
+    const handleFile = (e) => {
+        let imagens = [];
+
+        imagem.forEach((i) => {
+            imagens.push(i);
+        });
+
+        imagens.push(e.target.files[0]);
+
+        setImagem(imagens);
+
+    }
+
+    const deleteFile = (foto) => {
+        let nome_foto = foto;
+        nome_foto = nome_foto.split("%2F");
+        let foto_nome = nome_foto[1].split("?");
+        let excluir_foto = initialVehicle.fotosUrl.filter(nome_foto => !nome_foto.includes(foto));
+        EditVehicleService.deleteImage(foto_nome[0]).then(() => {
+            const objAdd = {
+                ...initialVehicle,
+                fotosUrl: excluir_foto,
+            };
+            EditVehicleService.updateData(objAdd)
+                .then(() => {
+                    listaFotos(excluir_foto);
+                    setImagem([]);
+                })
+                .catch((erro) => {
+                    console.log(erro);
+                });
+        });
+    };
+
+    const edit_vehicle = (obj, snackbarShowMessage: any) => {
+        setLoading(true)
+        const objAdd = {
+            ano: obj.ano,
+            arCondicionado: obj.arCondicionado,
+            cambio: obj.cambio,
+            cidade: obj.cidade,
+            cilindradas: obj.cilindradas,
+            clientId: obj.clientId,
+            dataKms: obj.dataKms,
+            descricao: obj.descricao,
+            finalPlaca: obj.finalPlaca,
+            kms: obj.kms,
+            marca: obj.marca,
+            modelo: obj.modelo,
+            tipoCombustivel: obj.tipoCombustivel,
+            tipoVeiculo: obj.tipoVeiculo,
+            uf: obj.uf,
+            fotosUrl: vehicle.fotosUrl,
+            preco: obj.preco,
+            id: vehicle?.id,
+        };
+        EditVehicleService.updateData(objAdd)
+            .then(() => {
+
+                snackbarShowMessage("Veículo atualizado com sucesso", "success");
+            })
+            .catch((erro) => {
+                console.log(erro);
+                snackbarShowMessage("Erro ao editar veículo", "error");
+            })
+            .finally(() => setLoading(false));
+    };
+
+
     return {
         loading,
         vehicle,
@@ -97,7 +212,17 @@ export const useVehicle = () => {
         loadVehicle,
         handleFavoriteVehicle,
         userInfo,
-        setRedirectUser
+        setRedirectUser,
+        returnCidades,
+        handleFile,
+        deleteFile,
+        edit_vehicle,
+        estados,
+        cidades,
+        user,
+        imagem,
+        setImagem,
+        vehicleLoaded
     }
 
 

@@ -52,7 +52,7 @@ export const UseNewVehicle = () => {
     const save_vehicle = (obj, snackbarShowMessage: any) => {
         setLoading(true)
         let promise = [];
-        debugger
+        
         imagem.forEach((i) => {
             promise.push(uploadFiles(i));
         });
