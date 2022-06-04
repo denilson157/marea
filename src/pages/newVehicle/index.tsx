@@ -33,7 +33,7 @@ const schema = yup.object().shape({
     preco: yup.string().required("Preço requerido"),
     tipoCombustivel: yup.string().required("Tipo de combustível requerido"),
     tipoVeiculo: yup.string().required("Tipo de veículo requerido"),
-    // uf: yup.string().required("Estado requerido")
+    uf: yup.string().required("Estado requerido")
 });
 const NewVehicle = ({ snackbarShowMessage }) => {
 
