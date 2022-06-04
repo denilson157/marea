@@ -1,18 +1,7 @@
 import { IUser } from 'interfaces';
 import { useState } from 'react'
 import * as UserService from '../../services/userService'
-import { AuthContext } from '../../contexts/auth';
 
-const initialValues: IUser = {
-    id: '',
-    birthDate: '',
-    cpfCnpj: '',
-    email: '',
-    name: '',
-    phone: '',
-    receiveContact: false,
-    favorites_vehicles: []
-}
 
 const cnpjMask = "99.999.999/9999-99";
 const cpfMask = "999.999.999-99";
