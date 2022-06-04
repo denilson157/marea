@@ -5,7 +5,7 @@ import { storage } from "../../services/firebaseConfig";
 import { AuthContext } from "contexts/auth";
 import { urlIbgeEstados } from "util/mock";
 
-export const UseNewVehicle = (snackbarShowMessage: any) => {
+export const UseNewVehicle = () => {
     const { user } = useContext<any>(AuthContext);
 
     useEffect(() => {
@@ -49,9 +49,10 @@ export const UseNewVehicle = (snackbarShowMessage: any) => {
         });
     };
 
-    const save_vehicle = (obj) => {
+    const save_vehicle = (obj, snackbarShowMessage: any) => {
         setLoading(true)
         let promise = [];
+        debugger
         imagem.forEach((i) => {
             promise.push(uploadFiles(i));
         });
@@ -72,6 +73,7 @@ export const UseNewVehicle = (snackbarShowMessage: any) => {
                 tipoCombustivel: obj.tipoCombustivel,
                 tipoVeiculo: obj.tipoVeiculo,
                 uf: obj.uf,
+                preco: obj.preco,
                 fotosUrl: e,
             };
 

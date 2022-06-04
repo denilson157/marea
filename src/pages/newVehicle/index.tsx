@@ -3,7 +3,9 @@ import { Container, makeStyles, Grid } from "@material-ui/core";
 import { MainLayout } from "../../components/template";
 import { Form as FormBootstrap, Col, Button } from "react-bootstrap";
 import * as yup from "yup";
-import { Formik, Form } from "formik";;
+import { Formik, Form } from "formik"; import { withSnackbar } from "util/Snackbar";
+import InputMask from 'react-input-mask';
+
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -17,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 const schema = yup.object().shape({
     ano: yup.date().required("Referência de quilometragem requerida"),
     arCondicionado: yup
-        .bool()
+        .string()
         .required("Informar se o veículo possui ou não ar condicionado"),
     cambio: yup.string().required("Tipo de câmbio requerido"),
     cidade: yup.string().required("Cidade requerida"),
@@ -31,7 +33,7 @@ const schema = yup.object().shape({
     preco: yup.string().required("Preço requerido"),
     tipoCombustivel: yup.string().required("Tipo de combustível requerido"),
     tipoVeiculo: yup.string().required("Tipo de veículo requerido"),
-    uf: yup.string().required("Estado requerido")
+    // uf: yup.string().required("Estado requerido")
 });
 const NewVehicle = ({ snackbarShowMessage }) => {
 
@@ -42,8 +44,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
         returnCidades,
         handleFile,
         loading
-    } = UseNewVehicle(snackbarShowMessage)
-
+    } = UseNewVehicle()
     const classes = useStyles();
 
     return (
@@ -53,7 +54,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                     <Formik
                         validationSchema={schema}
                         onSubmit={(values, { setSubmitting }) => {
-                            save_vehicle(values);
+                            save_vehicle(values, snackbarShowMessage);
 
                             setTimeout(() => {
                                 setSubmitting(false);
@@ -74,6 +75,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                             tipoCombustivel: undefined,
                             uf: undefined,
                             tipoVeiculo: undefined,
+                            preco: undefined
                         }}
                     >
                         {(formik) => {
@@ -172,15 +174,14 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                             <FormBootstrap.Label className="mb-0">
                                                 Ano do veículo:
                                             </FormBootstrap.Label>
-                                            <FormBootstrap.Control
-                                                type="text"
-                                                name="kms"
-                                                placeholder="Ex.: 2015"
-                                                {...formik.getFieldProps("ano")}
-                                                // value={values.email}
-                                                isInvalid={!!formik.errors.ano && formik.touched.ano === true}
+                                            <InputMask
+                                                type="string"
+                                                name="ano"
+                                                {...formik.getFieldProps('ano')}
+                                                mask="9999"
+                                                className="form-control"
+                                                isInvalid={!!formik.errors.ano}
                                             />
-
                                             <FormBootstrap.Control.Feedback type="invalid">
                                                 {formik.errors.ano}
                                             </FormBootstrap.Control.Feedback>
@@ -196,7 +197,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 Quilometragem atual do veículo:
                                             </FormBootstrap.Label>
                                             <FormBootstrap.Control
-                                                type="text"
+                                                type="number"
                                                 name="kms"
                                                 placeholder="Ex.: 200.000km"
                                                 {...formik.getFieldProps("kms")}
@@ -311,14 +312,15 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {...formik.getFieldProps("uf")}
                                                 isInvalid={!!formik.errors.uf && formik.touched.uf === true}
                                                 onChange={(e) => {
-                                                    formik.handleChange('uf')
+                                                    console.log(e)
+                                                    formik.handleChange(e)
                                                     returnCidades(e)
                                                 }}
                                             >
                                                 <option>Selecione...</option>
 
                                                 {estados.map((estado) => (
-                                                    <option value={estado.id}>{estado.nome}</option>
+                                                    <option value={estado.sigla}>{estado.nome}</option>
                                                 ))}
                                             </FormBootstrap.Select>
                                             <FormBootstrap.Control.Feedback type="invalid">
@@ -340,7 +342,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                             >
                                                 <option>Selecione...</option>
                                                 {cidades.map((cidade) => (
-                                                    <option value={cidade.id}>{cidade.nome}</option>
+                                                    <option value={cidade.nome}>{cidade.nome}</option>
                                                 ))}
                                             </FormBootstrap.Select>
                                             <FormBootstrap.Control.Feedback type="invalid">
@@ -355,7 +357,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                             controlId="validationFormik04"
                                         >
                                             <FormBootstrap.Label className="mb-0">
-                                                Possui ar-condicionado?:
+                                                Possui ar-condicionado?
                                             </FormBootstrap.Label>
                                             <FormBootstrap.Select
                                                 name="arCondicionado"
@@ -393,12 +395,36 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {formik.errors.cambio}
                                             </FormBootstrap.Control.Feedback>
                                         </FormBootstrap.Group>
+
+
+                                        <FormBootstrap.Group
+                                            className="mb-2"
+                                            as={Col}
+                                            md="1"
+                                            controlId="validationFormik090"
+                                        >
+                                            <FormBootstrap.Label className="mb-0">
+                                                Preço:
+                                            </FormBootstrap.Label>
+                                            <FormBootstrap.Control
+                                                type="number"
+                                                name="preco"
+                                                placeholder="Ex.: 20000"
+                                                {...formik.getFieldProps("preco")}
+                                                // value={values.email}
+                                                isInvalid={!!formik.errors.preco && formik.touched.preco === true}
+                                            />
+                                            <FormBootstrap.Control.Feedback type="invalid">
+                                                {formik.errors.preco}
+                                            </FormBootstrap.Control.Feedback>
+                                        </FormBootstrap.Group>
+
                                     </div>
                                     <div className="row" style={{ marginTop: "2vh" }}>
                                         <FormBootstrap.Group
                                             className="mb-2"
                                             as={Col}
-                                            md="10"
+                                            md="12"
                                             controlId="validationFormik02"
                                         >
                                             <FormBootstrap.Label className="mb-0">
@@ -460,4 +486,4 @@ const NewVehicle = ({ snackbarShowMessage }) => {
     );
 };
 
-export default NewVehicle;
+export default withSnackbar(NewVehicle);
