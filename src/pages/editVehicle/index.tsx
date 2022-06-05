@@ -58,7 +58,11 @@ const EditVehicle = (props) => {
         user,
         imagem,
         setImagem,
-        vehicleLoaded
+        vehicleLoaded,
+        modelos,
+        marcas,
+        preencherMarcas,
+        preencherModelos
 
     } = useVehicle();
 
@@ -171,6 +175,31 @@ const EditVehicle = (props) => {
                                             <FormBootstrap.Group
                                                 className="mb-2"
                                                 as={Col}
+                                                md="1"
+                                            >
+                                                <FormBootstrap.Label className="mb-0">
+                                                    Tipo de veículo:
+                                                </FormBootstrap.Label>
+                                                <FormBootstrap.Select
+                                                    name="tipoVeiculo"
+                                                    {...formik.getFieldProps("tipoVeiculo")}
+                                                    isInvalid={!!formik.errors.tipoVeiculo && formik.touched.tipoVeiculo === true}
+                                                    onChange={(e) => {
+                                                        formik.handleChange(e)
+                                                        preencherMarcas(e.target.value)
+                                                    }}
+                                                >
+                                                    <option value="Selecione">Selecione...</option>
+                                                    <option value="Carro">Carro</option>
+                                                    <option value="Moto">Moto</option>
+                                                </FormBootstrap.Select>
+                                                <FormBootstrap.Control.Feedback type="invalid">
+                                                    {formik.errors.tipoVeiculo}
+                                                </FormBootstrap.Control.Feedback>
+                                            </FormBootstrap.Group>
+                                            <FormBootstrap.Group
+                                                className="mb-2"
+                                                as={Col}
                                                 md="2"
                                                 controlId="validationFormik04"
                                             >
@@ -181,15 +210,17 @@ const EditVehicle = (props) => {
                                                     name="manual"
                                                     {...formik.getFieldProps("marca")}
                                                     isInvalid={!!formik.errors.marca && formik.touched.marca === true}
+                                                    onChange={(e) => {
+                                                        formik.handleChange(e)
+                                                        preencherModelos(formik.values.tipoVeiculo, marcas.find(m => m.nome === e.target.value)?.codigo)
+                                                    }}
                                                 >
-                                                    <option>Selecione a marca do veículo</option>
-                                                    <option>Fort</option>
-                                                    <option>Fiat</option>
-                                                    <option>Toyota</option>
-                                                    <option>Jeep</option>
-                                                    <option>Renault</option>
-                                                    <option>Chevrolet</option>
-                                                    <option>Volkswagen</option>
+                                                    <option value="Selecione">Selecione a marca do veículo</option>
+                                                    {
+                                                        marcas.map(m =>
+                                                            <option value={m.nome}>{m.nome}</option>
+                                                        )
+                                                    }
                                                 </FormBootstrap.Select>
                                                 <FormBootstrap.Control.Feedback type="invalid">
                                                     {formik.errors.marca}
@@ -210,9 +241,12 @@ const EditVehicle = (props) => {
                                                     {...formik.getFieldProps("modelo")}
                                                     isInvalid={!!formik.errors.modelo && formik.touched.modelo === true}
                                                 >
-                                                    <option>Selecione...</option>
-                                                    <option>Fiat Uno</option>
-                                                    <option>Renault Sandero</option>
+                                                    <option value="Selecione">Selecione o modelo do veículo</option>
+                                                    {
+                                                        modelos.map(m =>
+                                                            <option value={m.nome}>{m.nome}</option>
+                                                        )
+                                                    }
                                                 </FormBootstrap.Select>
                                                 <FormBootstrap.Control.Feedback type="invalid">
                                                     {formik.errors.modelo}
@@ -309,28 +343,6 @@ const EditVehicle = (props) => {
                                         </div>
 
                                         <div className="row" style={{ marginTop: "2vh" }}>
-
-                                            <FormBootstrap.Group
-                                                className="mb-2"
-                                                as={Col}
-                                                md="2"
-                                            >
-                                                <FormBootstrap.Label className="mb-0">
-                                                    Tipo de veículo:
-                                                </FormBootstrap.Label>
-                                                <FormBootstrap.Select
-                                                    name="tipoVeiculo"
-                                                    {...formik.getFieldProps("tipoVeiculo")}
-                                                    isInvalid={!!formik.errors.tipoVeiculo && formik.touched.tipoVeiculo === true}
-                                                >
-                                                    <option>Selecione...</option>
-                                                    <option>Carro</option>
-                                                    <option>Moto</option>
-                                                </FormBootstrap.Select>
-                                                <FormBootstrap.Control.Feedback type="invalid">
-                                                    {formik.errors.tipoVeiculo}
-                                                </FormBootstrap.Control.Feedback>
-                                            </FormBootstrap.Group>
 
                                             <FormBootstrap.Group
                                                 className="mb-2"

@@ -144,14 +144,6 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                         <option value={m.nome}>{m.nome}</option>
                                                     )
                                                 }
-                                                {/* <option>Selecione a marca do veículo</option>
-                                                <option>Fort</option>
-                                                <option>Fiat</option>
-                                                <option>Toyota</option>
-                                                <option>Jeep</option>
-                                                <option>Renault</option>
-                                                <option>Chevrolet</option>
-                                                <option>Volkswagen</option> */}
                                             </FormBootstrap.Select>
                                             <FormBootstrap.Control.Feedback type="invalid">
                                                 {formik.errors.marca}

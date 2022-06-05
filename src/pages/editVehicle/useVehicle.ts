@@ -2,9 +2,10 @@ import { IUser, IVehicle } from 'interfaces';
 import { useState, useEffect, useContext } from 'react'
 import * as VehicleInfoService from '../../services/vehicleInfoService'
 import * as UserService from '../../services/userService'
-import { urlIbgeEstados } from 'util/mock';
+import { retornarUrlMarcas, retornarUrlModelo, urlIbgeEstados } from "util/mock";
 import * as EditVehicleService from "../../services/vehicleEditService";
 import { AuthContext } from "contexts/auth"
+import { VehicleBrandModelAPI } from "interfaces/VehicleAPI";
 
 const initialValues: IVehicle = {
     id: '',
@@ -44,6 +45,36 @@ export const useVehicle = () => {
     const [cidades, setCidades] = useState([{ id: undefined, nome: "Selecione a cidade" }]);
 
 
+    const [modelos, setModelos] = useState<VehicleBrandModelAPI[]>([]);
+    const [marcas, setMarcas] = useState<VehicleBrandModelAPI[]>([]);
+
+
+    const preencherMarcas = (tipoVeiculo: string) => {
+
+        if (tipoVeiculo !== 'Selecione') {
+            fetch(retornarUrlMarcas(tipoVeiculo === "Carro" ? 'carros' : 'motos'))
+                .then((response) => response.json())
+                .then((data) => setMarcas(data));
+        } else {
+            setModelos([])
+            setMarcas([])
+        }
+
+    }
+
+    const preencherModelos = (tipoVeiculo: string, codigoMarca: string) => {
+
+        if (codigoMarca !== 'Selecione' && tipoVeiculo !== 'Selecione') {
+            fetch(retornarUrlModelo(tipoVeiculo === "Carro" ? 'carros' : 'motos', codigoMarca))
+                .then((response) => response.json())
+                .then((data) => setModelos(data.modelos));
+        } else {
+            setModelos([])
+        }
+    }
+
+
+
     useEffect(() => {
 
         function returnUfs() {
@@ -62,12 +93,27 @@ export const useVehicle = () => {
     }, []);
 
     useEffect(() => {
-        if (vehicle.id !== '' && estados.length > 0)
+        if (vehicle.id !== '' && estados.length > 0) {
+
             fetch(`${urlIbgeEstados}/` + estados.find(x => x.sigla === vehicle.uf)?.id + "/municipios")
                 .then((response) => response.json())
                 .then((dataCidade) => {
                     setCidades(dataCidade)
                 });
+                
+            const tipoVeiculo = vehicle.tipoVeiculo === "Carro" ? 'carros' : 'motos';
+
+            fetch(retornarUrlMarcas(tipoVeiculo))
+                .then((response) => response.json())
+                .then((marcas) => {
+                    setMarcas(marcas)
+
+                    fetch(retornarUrlModelo(tipoVeiculo, marcas.find(m => m.nome === vehicle.marca)?.codigo))
+                        .then((response) => response.json())
+                        .then((modelos) => setModelos(modelos.modelos));
+                });
+
+        }
     }, [estados, vehicle])
 
     const listaFotos = (fotos: string[]) => {
@@ -222,7 +268,11 @@ export const useVehicle = () => {
         user,
         imagem,
         setImagem,
-        vehicleLoaded
+        vehicleLoaded,
+        modelos,
+        marcas,
+        preencherMarcas,
+        preencherModelos
     }
 
 
