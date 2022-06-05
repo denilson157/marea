@@ -36,8 +36,9 @@ const VehicleInfo = (props) => {
         loadVehicle,
         userInfo,
         handleFavoriteVehicle,
-
-        setRedirectUser
+        clientInfo,
+        setRedirectUser,
+        phoneContact
     } = useVehicle()
 
     useEffect(() => {
@@ -150,22 +151,37 @@ const VehicleInfo = (props) => {
 
                                     <div className="mb-5">
                                         <p className="mb-1"> Dados vendedor </p>
+                                        {
+                                            clientInfo &&
+                                            <div className="d-flex">
 
-                                        <div>
-                                            <p className="mb-1"> Nome </p>
-                                            <span className="text-muted"> {`${vehicle?.cidade} / ${vehicle?.uf}`} </span>
-                                        </div>
+                                                <div>
+                                                    <p className="mb-1"> Nome </p>
+                                                    <span className="text-muted"> {clientInfo.name} </span>
+                                                </div>
+
+                                                <div className="mx-4">
+                                                    <p className="mb-1"> Localidade veículo</p>
+                                                    <span className="text-muted"> {`${vehicle?.cidade} / ${vehicle?.uf}`} </span>
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
 
 
                                     <div className="d-grid gap-2 px-4">
-                                        <button className="btn btn-primary" type="button" disabled={loading}>
-                                            {
-                                                loading &&
-                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                            }
-                                            Entrar em contato
-                                        </button>
+                                        {
+                                            clientInfo && clientInfo.receiveContact &&
+                                            <>
+                                                <a className="btn btn-primary" href={`whatsapp://send?phone=55${phoneContact}`}>
+                                                    {
+                                                        loading &&
+                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    }
+                                                    Entrar em contato
+                                                </a>
+                                            </>
+                                        }
                                     </div>
 
                                 </div>

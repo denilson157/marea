@@ -43,8 +43,13 @@ const updateVehiclesUser = (vehicleIdHandle, favoritesVehicle: string[]): string
     return favoritesVehicle
 }
 
-export const getData = (): Promise<IUser> => {
-    const userUid = auth?.currentUser?.uid
+export const getData = (userId?: string): Promise<IUser> => {
+    let userUid = '';
+
+    if (!userId)
+        userUid = auth?.currentUser?.uid;
+    else
+        userUid = userId;
 
     return new Promise((resolve, reject) => {
 

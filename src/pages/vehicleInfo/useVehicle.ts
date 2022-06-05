@@ -28,8 +28,10 @@ export const useVehicle = () => {
 
     const [loading, setLoading] = useState(false);
     const [userInfo, setUserInfo] = useState<IUser>(undefined);
+    const [clientInfo, setClientInfo] = useState<IUser>(undefined);
     const [vehicle, setVehicle] = useState<IVehicle>(initialValues);
     const [redirectUser, setRedirectUser] = useState(false)
+    const [phoneContact, setPhoneContact] = useState('')
 
     const loadVehicle = (vehicleId: string) => {
         setLoading(true)
@@ -40,6 +42,11 @@ export const useVehicle = () => {
                 VehicleInfoService.getData(vehicleId)
                     .then(respVehicle => {
                         setVehicle(respVehicle)
+                        UserService.getData(respVehicle.clientId)
+                            .then(clientInfo => {
+                                setClientInfo(clientInfo)
+                                setPhoneContact(clientInfo.phone.replace(/\D+/g, ''))
+                            })
                     })
                     .catch(() => {
 
@@ -83,8 +90,9 @@ export const useVehicle = () => {
         loadVehicle,
         handleFavoriteVehicle,
         userInfo,
-
-        setRedirectUser
+        clientInfo,
+        setRedirectUser,
+        phoneContact
     }
 
 
