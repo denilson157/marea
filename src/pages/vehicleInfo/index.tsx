@@ -159,11 +159,6 @@ const VehicleInfo = (props) => {
                                                     <p className="mb-1"> Nome </p>
                                                     <span className="text-muted"> {clientInfo.name} </span>
                                                 </div>
-
-                                                <div className="mx-4">
-                                                    <p className="mb-1"> Localidade veículo</p>
-                                                    <span className="text-muted"> {`${vehicle?.cidade} / ${vehicle?.uf}`} </span>
-                                                </div>
                                             </div>
                                         }
                                     </div>
