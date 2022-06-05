@@ -3,7 +3,8 @@ import * as VehicleService from "../../services/vehicleService";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../services/firebaseConfig";
 import { AuthContext } from "contexts/auth";
-import { urlIbgeEstados } from "util/mock";
+import { retornarUrlMarcas, retornarUrlModelo, urlIbgeEstados } from "util/mock";
+import { VehicleBrandModelAPI } from "interfaces/VehicleAPI";
 
 export const UseNewVehicle = () => {
     const { user } = useContext<any>(AuthContext);
@@ -22,9 +23,35 @@ export const UseNewVehicle = () => {
     const [imagem, setImagem] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const [estados, setEstados] = useState([{ id: 0, sigla: "  ", nome: "Carregando" }]);
+    const [modelos, setModelos] = useState<VehicleBrandModelAPI[]>([]);
+    const [marcas, setMarcas] = useState<VehicleBrandModelAPI[]>([]);
 
+    const [estados, setEstados] = useState([{ id: 0, sigla: "  ", nome: "Carregando" }]);
     const [cidades, setCidades] = useState([{ id: 0, nome: "Selecione a cidade" }]);
+
+    const preencherMarcas = (tipoVeiculo: string) => {
+
+        if (tipoVeiculo !== 'Selecione') {
+            fetch(retornarUrlMarcas(tipoVeiculo === "Carro" ? 'carros' : 'motos'))
+                .then((response) => response.json())
+                .then((data) => setMarcas(data));
+        } else {
+            setModelos([])
+            setMarcas([])
+        }
+
+    }
+
+    const preencherModelos = (tipoVeiculo: string, codigoMarca: string) => {
+        
+        if (codigoMarca !== 'Selecione' && tipoVeiculo !== 'Selecione') {
+            fetch(retornarUrlModelo(tipoVeiculo === "Carro" ? 'carros' : 'motos', codigoMarca))
+                .then((response) => response.json())
+                .then((data) => setModelos(data.modelos));
+        } else {
+            setModelos([])
+        }
+    }
 
     const uploadFiles = (file) => {
         return new Promise((resolve) => {
@@ -52,7 +79,7 @@ export const UseNewVehicle = () => {
     const save_vehicle = (obj, snackbarShowMessage: any) => {
         setLoading(true)
         let promise = [];
-        
+
         imagem.forEach((i) => {
             promise.push(uploadFiles(i));
         });
@@ -147,7 +174,11 @@ export const UseNewVehicle = () => {
         cidades,
         save_vehicle,
         returnCidades,
-        handleFile
+        handleFile,
+        modelos,
+        marcas,
+        preencherMarcas,
+        preencherModelos
     }
 
 }

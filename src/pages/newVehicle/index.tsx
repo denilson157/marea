@@ -43,7 +43,11 @@ const NewVehicle = ({ snackbarShowMessage }) => {
         save_vehicle,
         returnCidades,
         handleFile,
-        loading
+        loading,
+        modelos,
+        marcas,
+        preencherMarcas,
+        preencherModelos
     } = UseNewVehicle()
     const classes = useStyles();
 
@@ -93,6 +97,32 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                         <FormBootstrap.Group
                                             className="mb-2"
                                             as={Col}
+                                            md="1"
+                                        >
+                                            <FormBootstrap.Label className="mb-0">
+                                                Tipo de veículo:
+                                            </FormBootstrap.Label>
+                                            <FormBootstrap.Select
+                                                name="tipoVeiculo"
+                                                {...formik.getFieldProps("tipoVeiculo")}
+                                                isInvalid={!!formik.errors.tipoVeiculo && formik.touched.tipoVeiculo === true}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e)
+                                                    preencherMarcas(e.target.value)
+                                                }}
+                                            >
+                                                <option value="Selecione">Selecione...</option>
+                                                <option value="Carro">Carro</option>
+                                                <option value="Moto">Moto</option>
+                                            </FormBootstrap.Select>
+                                            <FormBootstrap.Control.Feedback type="invalid">
+                                                {formik.errors.tipoVeiculo}
+                                            </FormBootstrap.Control.Feedback>
+                                        </FormBootstrap.Group>
+
+                                        <FormBootstrap.Group
+                                            className="mb-2"
+                                            as={Col}
                                             md="2"
                                             controlId="validationFormik04"
                                         >
@@ -103,15 +133,25 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 name="manual"
                                                 {...formik.getFieldProps("marca")}
                                                 isInvalid={!!formik.errors.marca && formik.touched.marca === true}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e)
+                                                    preencherModelos(formik.values.tipoVeiculo, marcas.find(m => m.nome === e.target.value)?.codigo)
+                                                }}
                                             >
-                                                <option>Selecione a marca do veículo</option>
+                                                <option value="Selecione">Selecione a marca do veículo</option>
+                                                {
+                                                    marcas.map(m =>
+                                                        <option value={m.nome}>{m.nome}</option>
+                                                    )
+                                                }
+                                                {/* <option>Selecione a marca do veículo</option>
                                                 <option>Fort</option>
                                                 <option>Fiat</option>
                                                 <option>Toyota</option>
                                                 <option>Jeep</option>
                                                 <option>Renault</option>
                                                 <option>Chevrolet</option>
-                                                <option>Volkswagen</option>
+                                                <option>Volkswagen</option> */}
                                             </FormBootstrap.Select>
                                             <FormBootstrap.Control.Feedback type="invalid">
                                                 {formik.errors.marca}
@@ -132,9 +172,12 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {...formik.getFieldProps("modelo")}
                                                 isInvalid={!!formik.errors.modelo && formik.touched.modelo === true}
                                             >
-                                                <option>Selecione...</option>
-                                                <option>Fiat Uno</option>
-                                                <option>Renault Sandero</option>
+                                                 <option value="Selecione">Selecione o modelo do veículo</option>
+                                                {
+                                                    modelos.map(m =>
+                                                        <option value={m.nome}>{m.nome}</option>
+                                                    )
+                                                }
                                             </FormBootstrap.Select>
                                             <FormBootstrap.Control.Feedback type="invalid">
                                                 {formik.errors.modelo}
@@ -236,28 +279,6 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                             className="mb-2"
                                             as={Col}
                                             md="2"
-                                        >
-                                            <FormBootstrap.Label className="mb-0">
-                                                Tipo de veículo:
-                                            </FormBootstrap.Label>
-                                            <FormBootstrap.Select
-                                                name="tipoVeiculo"
-                                                {...formik.getFieldProps("tipoVeiculo")}
-                                                isInvalid={!!formik.errors.tipoVeiculo && formik.touched.tipoVeiculo === true}
-                                            >
-                                                <option>Selecione...</option>
-                                                <option>Carro</option>
-                                                <option>Moto</option>
-                                            </FormBootstrap.Select>
-                                            <FormBootstrap.Control.Feedback type="invalid">
-                                                {formik.errors.tipoVeiculo}
-                                            </FormBootstrap.Control.Feedback>
-                                        </FormBootstrap.Group>
-
-                                        <FormBootstrap.Group
-                                            className="mb-2"
-                                            as={Col}
-                                            md="2"
                                             controlId="validationFormik04"
                                         >
                                             <FormBootstrap.Label className="mb-0">
@@ -311,7 +332,6 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {...formik.getFieldProps("uf")}
                                                 isInvalid={!!formik.errors.uf && formik.touched.uf === true}
                                                 onChange={(e) => {
-                                                    console.log(e)
                                                     formik.handleChange(e)
                                                     returnCidades(e)
                                                 }}
