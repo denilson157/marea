@@ -93,6 +93,8 @@ const Home = () => {
             arrayBusca.push(where('marca', '==', marca))
         if (modelo.length > 0)
             arrayBusca.push(where('modelo', '==', modelo));
+        if (tipoVeiculo.length > 0)
+            arrayBusca.push(where('tipoVeiculo', '==', tipoVeiculo));
 
         if (!disableAno && anoDe.length > 0)
             arrayBusca.push(where('ano', '>=', parseInt(anoDe)));
@@ -125,7 +127,7 @@ const Home = () => {
                 console.log(error);
             });
     }
-
+    console.log(user)
     return (
         <MainLayout>
             <Grid item sm={12}>
@@ -215,7 +217,7 @@ const Home = () => {
                                                 }
                                             </Carousel>
                                             <div className='d-flex justify-content-between pb-1'>
-                                                <Link to={"/vehicle_info/" + vehicle.data().id} className="d-flex justify-content-between w-100 text-decoration-none text-reset">
+                                                <Link to={"/vehicle_info/" + vehicle.id} className="d-flex justify-content-between w-100 text-decoration-none text-reset">
                                                     <span>{vehicle.data().marca + ' ' + vehicle.data().modelo}</span>
                                                     <span>{vehicle.data().ano}</span>
                                                 </Link>
@@ -232,7 +234,7 @@ const Home = () => {
                                                     </button>
                                                 }
                                             </div>
-                                            <Link to={"/vehicle_info/" + vehicle.data().id} className="text-decoration-none text-reset">
+                                            <Link to={"/vehicle_info/" + vehicle.id} className="text-decoration-none text-reset">
                                                 <div className='d-flex pb-2'>
                                                     <span className='text-muted pe-2'>{vehicle.data().tipoCombustivel}</span>
                                                     <span className='text-muted pe-2'>{vehicle.data().cambio}</span>
