@@ -5,6 +5,7 @@ import { Form as FormBootstrap, Col, Button } from "react-bootstrap";
 import * as yup from "yup";
 import { Formik, Form } from "formik"; import { withSnackbar } from "util/Snackbar";
 import InputMask from 'react-input-mask';
+import { cilindradas } from "util/mock";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -164,7 +165,7 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {...formik.getFieldProps("modelo")}
                                                 isInvalid={!!formik.errors.modelo && formik.touched.modelo === true}
                                             >
-                                                 <option value="Selecione">Selecione o modelo do veículo</option>
+                                                <option value="Selecione">Selecione o modelo do veículo</option>
                                                 {
                                                     modelos.map(m =>
                                                         <option value={m.nome}>{m.nome}</option>
@@ -303,9 +304,13 @@ const NewVehicle = ({ snackbarShowMessage }) => {
                                                 {...formik.getFieldProps("cilindradas")}
                                                 isInvalid={!!formik.errors.cilindradas && formik.touched.cilindradas === true}
                                             >
+
                                                 <option>Selecione...</option>
-                                                <option>0</option>
-                                                <option>1</option>
+                                                {
+                                                    cilindradas.map(c =>
+                                                        <option key={c.value} value={c.value}>{c.value}</option>
+                                                    )
+                                                }
                                             </FormBootstrap.Select>
                                             <FormBootstrap.Control.Feedback type="invalid">
                                                 {formik.errors.cilindradas}

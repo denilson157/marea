@@ -11,6 +11,7 @@ import { useVehicle } from "./useVehicle";
 import InputMask from 'react-input-mask';
 import { Redirect } from "react-router";
 import { withSnackbar } from "util/Snackbar";
+import { cilindradas } from "util/mock";
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -62,7 +63,8 @@ const EditVehicle = (props) => {
         modelos,
         marcas,
         preencherMarcas,
-        preencherModelos
+        preencherModelos,
+        setLoading
 
     } = useVehicle();
 
@@ -82,6 +84,7 @@ const EditVehicle = (props) => {
 
     useEffect(() => {
         if (imagem.length >= 1) {
+            setLoading(true)
             let promise = [];
             let fotosCarro = [];
             imagem.forEach((i) => {
@@ -105,8 +108,10 @@ const EditVehicle = (props) => {
                     })
                     .catch((erro) => {
                         console.log(erro);
-                    });
-            });
+                    })
+                    .finally(() => setLoading(false))
+            })
+                .catch(() => setLoading(false))
         }
         // eslint-disable-next-line
     }, [imagem]);
@@ -381,8 +386,11 @@ const EditVehicle = (props) => {
                                                     isInvalid={!!formik.errors.cilindradas && formik.touched.cilindradas === true}
                                                 >
                                                     <option>Selecione...</option>
-                                                    <option>0</option>
-                                                    <option>1</option>
+                                                    {
+                                                        cilindradas.map(c =>
+                                                            <option key={c.value} value={c.value}>{c.value}</option>
+                                                        )
+                                                    }
                                                 </FormBootstrap.Select>
                                                 <FormBootstrap.Control.Feedback type="invalid">
                                                     {formik.errors.cilindradas}
@@ -551,10 +559,13 @@ const EditVehicle = (props) => {
                                                                 alt="imgFotos"
                                                             />
                                                             <button
-                                                                type="button"
+                                                                className="btn cursor-pointer px-1 text-danger"
                                                                 onClick={() => deleteFile(foto)}
+                                                                type="button"
                                                             >
-                                                                X
+                                                                <span className="material-icons">
+                                                                    delete_forever
+                                                                </span>
                                                             </button>
                                                         </div>
                                                     ))}
@@ -586,8 +597,9 @@ const EditVehicle = (props) => {
                         </Formik>
                     </Container>
                 </Grid>
-            )}
-        </MainLayout>
+            )
+            }
+        </MainLayout >
     );
 };
 

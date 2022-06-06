@@ -272,7 +272,8 @@ export const useVehicle = () => {
         modelos,
         marcas,
         preencherMarcas,
-        preencherModelos
+        preencherModelos,
+        setLoading
     }
 
 
