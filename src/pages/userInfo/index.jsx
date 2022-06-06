@@ -66,7 +66,16 @@ const EditUser = ({ snackbarShowMessage }) => {
     const changeUserInfo = (obj) => {
         setloadingSubmit(true);
 
-        userService.updateUser(obj).then(() => {
+        const objUpdate = {
+            ...user,
+            name: obj.name,
+            email: obj.email,
+            phone: obj.phone,
+            birthDate: obj.birthDate,
+            cpfCnpj: obj.cpfCnpj,
+            receiveContact: obj.receiveContact,
+        }
+        userService.updateUser(objUpdate).then(() => {
             snackbarShowMessage("Dados alterados com sucesso.", "success")
         })
             .catch((erro) => {
@@ -103,7 +112,7 @@ const EditUser = ({ snackbarShowMessage }) => {
 
     if (redirectUser)
         return <Redirect to="/home" />
-        
+
     return (
         <MainLayout>
             <Helmet>
