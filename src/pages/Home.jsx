@@ -119,8 +119,8 @@ const Home = () => {
         }));
     }, [filtros]);
 
-    function handleFavorite(e) {
-        updateFavoriteVehicle(e.target.getAttribute("value"))
+    function handleFavorite(vehicleId) {
+        updateFavoriteVehicle(vehicleId)
             .then(() => {
                 loadUser();
             }).catch((error) => {
@@ -209,8 +209,9 @@ const Home = () => {
 
                                     <div className='row'>
                                         {
-                                            vehicles.map((vehicle, index) =>
-                                                <div key={index} className='container bg-white shadow p-3 m-3' style={{ maxWidth: '330px' }}>
+                                            vehicles.map((vehicle, index) => {
+                                                console.log(vehicle)
+                                                return (<div key={index} className='container bg-white shadow p-3 m-3' style={{ maxWidth: '330px' }}>
                                                     <Carousel className="carousel-pictures">
                                                         {
                                                             vehicle.data().fotosUrl.map((f, i) =>
@@ -232,10 +233,10 @@ const Home = () => {
                                                         </Link>
                                                         {
                                                             user &&
-                                                            <button type="button" class="btn color-primary p-0 h-auto" onClick={handleFavorite}>
-                                                                <span className="material-icons" value={vehicle.data().id}>
+                                                            <button type="button" class="btn color-primary p-0 h-auto" onClick={() => handleFavorite(vehicle.id)}>
+                                                                <span className="material-icons" value={vehicle.id}>
                                                                     {
-                                                                        !loading && user && user.favorites_vehicles.includes(vehicle.data().id) ?
+                                                                        !loading && user && user.favorites_vehicles.includes(vehicle.id) ?
                                                                             "favorite" :
                                                                             "favorite_border"
                                                                     }
@@ -255,7 +256,8 @@ const Home = () => {
                                                         </div>
                                                     </Link>
                                                 </div>
-                                            )
+                                                )
+                                            })
                                         }
                                     </div>
 
