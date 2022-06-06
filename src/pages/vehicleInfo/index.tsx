@@ -168,7 +168,7 @@ const VehicleInfo = (props) => {
                                         {
                                             clientInfo && clientInfo.receiveContact &&
                                             <>
-                                                <a className="btn btn-primary" href={`whatsapp://send?phone=55${phoneContact}`}>
+                                                <a className="btn btn-primary" target="_blank" href={`https://api.whatsapp.com/send?phone=55${phoneContact}`}>
                                                     {
                                                         loading &&
                                                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
