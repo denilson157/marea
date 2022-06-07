@@ -547,7 +547,7 @@ const EditVehicle = (props) => {
                                                 <div className="row">
                                                     <h4>Adicionar fotos: </h4>
                                                     {vehicle?.fotosUrl.map((foto, i) => (
-                                                        <div className="col-12" style={{ float: "left" }}>
+                                                        <div className="col-md-6 col-12" style={{ float: "left" }}>
                                                             <img
                                                                 src={foto}
                                                                 key={i}

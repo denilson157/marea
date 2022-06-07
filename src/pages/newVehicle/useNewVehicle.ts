@@ -85,7 +85,7 @@ export const UseNewVehicle = () => {
         });
         Promise.all(promise).then((e) => {
             const objAdd = {
-                ano: obj.ano,
+                ano: parseInt(obj.ano),
                 arCondicionado: obj.arCondicionado,
                 cambio: obj.cambio,
                 cidade: obj.cidade,

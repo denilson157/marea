@@ -217,7 +217,7 @@ export const useVehicle = () => {
     const edit_vehicle = (obj, snackbarShowMessage: any) => {
         setLoading(true)
         const objAdd = {
-            ano: obj.ano,
+            ano: parseInt(obj.ano),
             arCondicionado: obj.arCondicionado,
             cambio: obj.cambio,
             cidade: obj.cidade,
