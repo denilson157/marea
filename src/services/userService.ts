@@ -57,8 +57,11 @@ export const getData = (userId?: string): Promise<IUser> => {
             getDoc(doc(db, node, userUid))
                 .then(snap => {
                     const exist = snap.exists();
-                    if (exist)
-                        resolve(snap.data() as IUser)
+                    if (exist) {
+                        const userReturn = snap.data() as IUser
+                        userReturn.id = snap.id
+                        resolve(userReturn)
+                    }
                     else
                         reject("Not found")
                 })

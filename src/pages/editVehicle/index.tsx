@@ -64,20 +64,30 @@ const EditVehicle = (props) => {
         marcas,
         preencherMarcas,
         preencherModelos,
-        setLoading
-
+        setLoading,
+        checkUserVehicle
     } = useVehicle();
 
 
+    useEffect(() => {
+
+        setTimeout(() => {
+
+            checkUserVehicle(props.match?.params?.vehicleId)
+        }, 800)
+
+        // eslint-disable-next-line
+    }, []);
 
     useEffect(() => {
         const vehicleId = props.match?.params?.vehicleId;
 
         if (!vehicleId) setRedirectUser(true);
-        else
+        else {
             setTimeout(() => {
                 loadVehicle(vehicleId);
             }, 800);
+        }
 
         // eslint-disable-next-line
     }, [props.match?.params?.vehicleId]);

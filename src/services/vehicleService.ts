@@ -28,3 +28,20 @@ export const getByListId = async (uids: string[]): Promise<IVehicle[]> => {
 
     return vehicles
 }
+export const getByUserId = async (userId) => {
+    const busca = query(
+        collection(db, 'vehicles'), where('clientId', '==', userId)
+    );
+
+    const vehiclesData = await getDocs(busca);
+
+    const vehicles: IVehicle[] = []
+
+    vehiclesData.forEach(vd => {
+        const vehicle = vd.data() as IVehicle
+        vehicle.id = vd.id
+        vehicles.push(vehicle)
+    })
+
+    return vehicles
+}

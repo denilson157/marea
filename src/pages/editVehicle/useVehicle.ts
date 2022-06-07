@@ -1,6 +1,7 @@
 import { IUser, IVehicle } from 'interfaces';
 import { useState, useEffect, useContext } from 'react'
 import * as VehicleInfoService from '../../services/vehicleInfoService'
+import * as VehicleService from '../../services/vehicleService'
 import * as UserService from '../../services/userService'
 import { retornarUrlMarcas, retornarUrlModelo, urlIbgeEstados } from "util/mock";
 import * as EditVehicleService from "../../services/vehicleEditService";
@@ -62,6 +63,39 @@ export const useVehicle = () => {
 
     }
 
+    const checkUserVehicle = (vehicleId?: string) => {
+        loadUserInfo()
+            .then((a) => {
+                debugger
+                if (a && vehicleId) {
+
+                    VehicleService.getByUserId(a.id)
+                        .then(respVehicle => {
+                            if (!respVehicle.map(x => x.id).includes(vehicleId)) {
+
+                                setRedirectUser(true);
+                            }
+                        })
+                        .catch(() => {
+
+                        })
+                        .finally(() => setLoading(false))
+                }
+                else
+                    setRedirectUser(true);
+            })
+    }
+    const loadUserInfo = (): Promise<IUser> => {
+        return new Promise((resolve, reject) => {
+
+            UserService.getData()
+                .then(_userInfo => {
+                    setUserInfo(_userInfo)
+                    resolve(_userInfo)
+                })
+        })
+    }
+
     const preencherModelos = (tipoVeiculo: string, codigoMarca: string) => {
 
         if (codigoMarca !== 'Selecione' && tipoVeiculo !== 'Selecione') {
@@ -100,7 +134,7 @@ export const useVehicle = () => {
                 .then((dataCidade) => {
                     setCidades(dataCidade)
                 });
-                
+
             const tipoVeiculo = vehicle.tipoVeiculo === "Carro" ? 'carros' : 'motos';
 
             fetch(retornarUrlMarcas(tipoVeiculo))
@@ -144,17 +178,6 @@ export const useVehicle = () => {
                     })
                     .finally(() => setLoading(false))
             })
-    }
-
-    const loadUserInfo = (): Promise<IUser> => {
-        return new Promise((resolve, reject) => {
-
-            UserService.getData()
-                .then(_userInfo => {
-                    setUserInfo(_userInfo)
-                    resolve(_userInfo)
-                })
-        })
     }
 
     const handleFavoriteVehicle = (vehicleId: string) => {
@@ -273,7 +296,8 @@ export const useVehicle = () => {
         marcas,
         preencherMarcas,
         preencherModelos,
-        setLoading
+        setLoading,
+        checkUserVehicle
     }
 
 
