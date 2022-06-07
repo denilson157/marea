@@ -150,7 +150,7 @@ const VehicleInfo = (props) => {
                                     <hr className="mb-3" />
 
                                     <div className="mb-5">
-                                        <p className="mb-1"> Dados vendedor </p>
+                                        <p className="mb-1"> Dados do anunciante </p>
                                         {
                                             clientInfo &&
                                             <div className="d-flex">
@@ -176,6 +176,11 @@ const VehicleInfo = (props) => {
                                                     Entrar em contato
                                                 </a>
                                             </>
+                                        }
+                                        {clientInfo && !clientInfo.receiveContact &&
+                                            <p>
+                                                O Anunciante não está recebendo contatos no momento. Favorite o veículo e tente entrar em contato novamente mais tarde.
+                                            </p>
                                         }
                                     </div>
 
