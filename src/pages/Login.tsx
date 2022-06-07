@@ -10,11 +10,13 @@ import '../components/template/styles.css'
 import { BaseLayout } from '../components/template';
 import { IUser } from 'interfaces';
 import { getDataByEmail } from 'services/userService';
+import TermsOfUse from './TermsOfUse';
 
 const Login = ({ snackbarShowMessage }) => {
     const { signIn, user } = useContext<any>(AuthContext);
     const [loading, setLoading] = useState(false);
     const [redirectUser, setRedirectUser] = useState(false);
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
     useEffect(() => {
         if (user)
@@ -159,20 +161,25 @@ const Login = ({ snackbarShowMessage }) => {
                             <span>OU    </span>
                         </div>
 
-
+                        <div className="mt-2">
+                            <TermsOfUse acceptTerm={setTermsAccepted} termAccepted={termsAccepted} />
+                        </div>
                         <div className="d-flex justify-content-center">
 
-                            <button className="SocialLogin-Google my-3" onClick={loginGoogle} disabled={loading} type="button" aria-label="Fazer login com Google">
+
+                            <button className="SocialLogin-Google my-3" onClick={loginGoogle} disabled={loading || !termsAccepted} type="button" aria-label="Fazer login com Google">
                                 <span>
                                     {
                                         loading ?
                                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                             :
+
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                 width="18"
                                                 height="18"
                                                 viewBox="0 0 18 18"
-                                                className="SocialLoginBox-button--Google">
+                                                className="SocialLoginBox-button--Google"
+                                            >
                                                 <g fill="none" fillRule="evenodd">
                                                     <path fill="#EA4335"
                                                         d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"></path>
