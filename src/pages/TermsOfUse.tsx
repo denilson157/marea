@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import { withSnackbar } from '../util/Snackbar'
 
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Tabs, Tab } from 'react-bootstrap';
+import { UserPart, AnunciantePart } from './TermsParts';
 
 const TermsOfUse = ({ snackbarShowMessage, acceptTerm, termAccepted }) => {
 
@@ -35,15 +36,29 @@ const TermsOfUse = ({ snackbarShowMessage, acceptTerm, termAccepted }) => {
 
     }
 
+
     return (
         <>
             {
                 show &&
-                <Modal show={show} onHide={handleOpen} >
+                <Modal size="lg" show={show} onHide={handleOpen} >
                     <Modal.Header closeButton>
                         <Modal.Title>Termos de uso</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>Termos de uso</Modal.Body>
+                    <Modal.Body>                       
+
+                        <Tabs defaultActiveKey="usuario" id="uncontrolled-tab-example" className="mb-3">
+                            <Tab eventKey="usuario" title="Usuário">
+                                <UserPart />
+                            </Tab>
+                            <Tab eventKey="anunciante" title="Anunciante">
+                                <AnunciantePart />
+                            </Tab>
+                        </Tabs>
+
+
+
+                    </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleOpen}>
                             Fechar
